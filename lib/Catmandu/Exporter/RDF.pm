@@ -6,12 +6,23 @@ use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 use RDF::Trine::Serializer;
+use RDF::NS;
 
 with 'Catmandu::Exporter';
 
 has type => (is => 'ro', default => sub { 'RDFXML' });
 has serializer => (is => 'ro', lazy => 1, builder => '_build_serializer' );
-has _data => (is => 'rw'); # TODO: 
+
+# experimental
+has _data => (is => 'rw');
+has ns => (
+    is => 'ro', 
+    default => sub { RDF::NS->new() },
+    coerce => sub {
+        (!ref $_[0] or ref $_[0] ne 'RDF::NS') ? RDF::NS->new(@_) : $_[0];
+    },
+    handles => ['uri'],
+);
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -38,9 +49,9 @@ sub add {
     # TODO: make performant
     my $model = RDF::Trine::Model->new;
 
-    # TODO: support lazy hashref with RDF::NS etc.
-    # e.g. subject in _id:
-    $model->add_hashref( $data );
+    my $rdf = $self->_expand_rdf($data);
+    use Data::Dumper; say STDERR Dumper($rdf);
+    $model->add_hashref( $rdf );
 
     $self->_data(
         $self->_data->concat( $model->as_stream )
@@ -53,6 +64,58 @@ sub commit {
     my ($self) = @_;
 
     $self->serializer->serialize_iterator_to_file( $self->fh, $self->_data );
+}
+
+sub _blank {
+    my ($self) = @_;
+    return '_:b'.++$self->{_blank_id};
+}
+
+sub _expand_object {
+    my ($self,$obj) = @_;
+
+    # RDF::Trine allows: plain literal or /^_:/ or /^[a-z0-9._\+-]{1,12}:\S+$/i or /^(.*)\@([a-z]{2})$/)
+    return $obj if !ref $obj;
+
+    my $rdf = { };
+    if ($obj->{'@id'}) {
+        $rdf = { type => 'uri', value => $obj->{'@id'} };
+    } elsif ($obj->{'@value'}) {
+        $rdf = { type => 'literal', value => $obj->{'@value'} };
+        $rdf->{datatype} = $self->uri($obj->{'@type'}) if defined $obj->{'@type'}; 
+        #TODO #@language
+    } else {
+        $rdf->{type}  = 'bnode';
+        $rdf->{value} = $self->_blank();
+    }
+
+    # TODO @type
+    # TODO: _:xx allowed in RDF:NS?
+
+    return $rdf;
+}
+
+sub _expand_rdf {
+    my ($self,$data) = @_;
+
+    return $data unless $data->{'@id'};
+    my $subject = $data->{'@id'};
+
+    my $statements = {};
+    foreach my $p (keys %$data) {
+        next if $p eq '@id';
+        my ($predicate, $object) = ($p, $data->{$p});
+
+        # TODO: disallow http://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml (better in RDF::NS)
+        if ($predicate =~ /^([a-z][a-z0-9]*)[:_]/ and $1 ne 'http') {
+            $predicate = $self->uri($predicate);
+        }
+
+        push @{ $statements->{$predicate} },
+            $self->_expand_object($object);
+    }
+
+    return { $subject => $statements };
 }
 
 =head1 SYNOPSIS
@@ -85,11 +148,23 @@ and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
 The option C<fix> is supported as derived from L<Catmandu::Fixable>. For every
 C<add> or for every item in C<add_many> the given fixes will be applied first.
 
+The option C<ns> can refer to an instance of or to a constructor argument of
+L<RDF::NS>. Use a fixed date, such as '20130816' to make sure your URI
+namespace prefixes are stable.
+
+=head2 add
+
+RDF data can be added as used by L<RDF::Trine::Model/as_hashref> in form of
+hash references.  A simplified form of JSON-LD will be supported as well.
+
 =head2 count
 
 Always returns 1 because there is always one RDF graph in a RDF document.
 
-TODO: better return the number of unique RDF subjects?
+=head2 uri
+
+Used to expands an URI with L<RDF::NS>: for instance C<dc:title> is expanded to
+<http://purl.org/dc/elements/1.1/title>.
 
 =cut
 
