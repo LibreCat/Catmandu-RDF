@@ -15,7 +15,11 @@ sub check_add(@) {
     $exporter->add($data);
     $exporter->commit;
 
-    is $file, $result, $_[0];
+    if (ref $result) {
+        $result->($file);
+    } else {
+        is $file, $result, $_[0];
+    }
 }
 
 
@@ -49,20 +53,39 @@ check_add { type => 'ttl', ns => '20130816' }, {
 } => "<http://example.org/> <http://example.org/predicate> _:b1 .\n",
     'blank node object';
 
-done_testing;
-
-__END__
-
-# Support a subset of JSON-LD
-# TODO: test
-{
+check_add { type => 'ttl', ns => '20130816' }, {
+    '@id' => 'http://www.gbv.de/',
     'geo:location' => {
-        'geo:lat' => '...',
-        'geo:long' => '...',
-    },
-}
+        'geo:lat' => '9.93492',
+        'geo:long' => '51.5393710',
+    } 
+} => sub {
+    my $ttl = shift;
+    ok $ttl =~ qr{_:b1 <http://www.w3.org/2003/01/geo/wgs84_pos\#lat> "9.93492"} 
+    && $ttl =~ qr{<http://www.w3.org/2003/01/geo/wgs84_pos\#long> "51.5393710"}
+    && $ttl =~ qr{<http://www.gbv.de/> <http://www.w3.org/2003/01/geo/wgs84_pos\#location> _:b1},
+        'nested RDF';
+};
 
-set_field('@id','http://example.org/subject1');
-set_field('dc:title','Example');
-set_field('dc:modified.@value',"2010-05-29T14:17:39+02:00");
-set_field('dc:modified.@type','xsd:dateTime');
+## fixes
+
+check_add { type => 'ttl', ns => '20130816', 
+    fix => ["move_field('_id','\@id')","prepend('\@id','http://example.org/');"]
+}, {
+    '_id' => 123,
+    'dc:title' => 'Foo',
+} => "<http://example.org/123> <http://purl.org/dc/elements/1.1/title> \"Foo\" .\n",
+    'fix subject URI';
+
+check_add { type => 'ttl', ns => '20130816', 
+    fix => [
+        "move_field('dc:extent','dc:extent.\@value');",
+        "add_field('dc:extent.\@type','xsd:integer');"
+    ]
+}, {
+    '@id' => 'http://example.org/',
+    'dc:extent' => '42',
+} => "<http://example.org/> <http://purl.org/dc/elements/1.1/extent> 42 .\n",
+    'fix predicate';
+
+done_testing;

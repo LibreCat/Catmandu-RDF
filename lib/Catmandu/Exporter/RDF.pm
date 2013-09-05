@@ -50,7 +50,7 @@ sub add {
     my $model = RDF::Trine::Model->new;
 
     my $rdf = $self->_expand_rdf($data);
-    use Data::Dumper; say STDERR Dumper($rdf);
+    #use Data::Dumper; say STDERR Dumper($rdf);
     $model->add_hashref( $rdf );
 
     $self->_data(
@@ -77,7 +77,8 @@ sub _expand_object {
     # RDF::Trine allows: plain literal or /^_:/ or /^[a-z0-9._\+-]{1,12}:\S+$/i or /^(.*)\@([a-z]{2})$/)
     return $obj if !ref $obj;
 
-    my $rdf = { };
+    my ($rdf, $bnode) = { };
+
     if ($obj->{'@id'}) {
         $rdf = { type => 'uri', value => $obj->{'@id'} };
     } elsif ($obj->{'@value'}) {
@@ -87,12 +88,22 @@ sub _expand_object {
     } else {
         $rdf->{type}  = 'bnode';
         $rdf->{value} = $self->_blank();
+
+        for (keys %$obj) { # TODO: recurse via _expand_rdf
+            next if /^@/;
+
+            my $b_predicate = $self->uri($_);
+            my $b_object    = $self->_expand_object($obj->{$_});
+
+            push @{ $bnode->{$b_predicate} }, $b_object;
+        }
+        $bnode = { $rdf->{value} => $bnode } if $bnode;
     }
 
     # TODO @type
     # TODO: _:xx allowed in RDF:NS?
 
-    return $rdf;
+    return ($rdf, $bnode);
 }
 
 sub _expand_rdf {
@@ -101,7 +112,11 @@ sub _expand_rdf {
     return $data unless $data->{'@id'};
     my $subject = $data->{'@id'};
 
+    my @triples;
+
     my $statements = {};
+    my $triples = { $subject => $statements };
+
     foreach my $p (keys %$data) {
         next if $p eq '@id';
         my ($predicate, $object) = ($p, $data->{$p});
@@ -111,11 +126,15 @@ sub _expand_rdf {
             $predicate = $self->uri($predicate);
         }
 
-        push @{ $statements->{$predicate} },
-            $self->_expand_object($object);
+        my ($o, $t) = $self->_expand_object($object);
+        push @{ $statements->{$predicate} }, $o;
+
+        if ($t) { # additional triples
+            $triples->{$_} = $t->{$_} for keys %$t;
+        }
     }
 
-    return { $subject => $statements };
+    return $triples;
 }
 
 =head1 SYNOPSIS
