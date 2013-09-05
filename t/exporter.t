@@ -54,6 +54,10 @@ __END__
         "@value": "2010-05-29T14:17:39+02:00",
         "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
     }
+    'geo:location' => {
+        'geo:lat' => '...',
+        'geo:long' => '...',
+    },
 }
 
 set_field('@id','http://example.org/subject1');

@@ -1,5 +1,6 @@
 package Catmandu::Exporter::RDF;
 #ABSTRACT: serialize RDF data
+#VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
