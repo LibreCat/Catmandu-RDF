@@ -1,2 +1,2 @@
-[TestingAndDebugging::RequireUseStrict]
+[-TestingAndDebugging::RequireUseStrict]
 equivalent_modules = Catmandu::Sane

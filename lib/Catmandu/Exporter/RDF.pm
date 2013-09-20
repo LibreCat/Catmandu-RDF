@@ -1,6 +1,6 @@
 package Catmandu::Exporter::RDF;
-#ABSTRACT: serialize RDF data
-#VERSION
+# ABSTRACT: serialize RDF data
+# VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -157,9 +157,9 @@ sub _expand_rdf {
 
 Create a new Catmandu RDF exporter which serializes into a file or to STDOUT.
 
-A serialization form can be set with option C<type>. The type must be a
-subclass name of L<RDF::Trine::Serializer>, for instance C<Turtle> for
-RDF/Turtle with L<RDF::Trine::Serializer::Turtle>. The first letter is
+A serialization form can be set with option C<type>. The option C<type> must
+refer to a subclass name of L<RDF::Trine::Serializer>, for instance C<Turtle>
+for RDF/Turtle with L<RDF::Trine::Serializer::Turtle>. The first letter is
 transformed uppercase, so C<< format => 'turtle' >> will work as well. In
 addition there are aliases C<ttl> for C<Turtle>, C<n3> for C<Notation3>, C<xml>
 and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
@@ -168,28 +168,30 @@ The option C<fix> is supported as derived from L<Catmandu::Fixable>. For every
 C<add> or for every item in C<add_many> the given fixes will be applied first.
 
 The option C<ns> can refer to an instance of or to a constructor argument of
-L<RDF::NS>. Use a fixed date, such as '20130816' to make sure your URI
+L<RDF::NS>. Use a fixed date, such as "C<20130816>" to make sure your URI
 namespace prefixes are stable.
 
-=head2 add
+=head2 add( ... )
 
 RDF data can be added as used by L<RDF::Trine::Model/as_hashref> in form of
-hash references.  A simplified form of JSON-LD will be supported as well.
+hash references.  A simplified form of JSON-LD is be supported as well.
 
 =head2 count
 
-Always returns 1 because there is always one RDF graph in a RDF document.
+Always returns 1 or 0 (there is only one RDF graph in a RDF document).
 
-=head2 uri
+=head2 uri( $uri )
 
-Used to expands an URI with L<RDF::NS>: for instance C<dc:title> is expanded to
-<http://purl.org/dc/elements/1.1/title>.
+Expand and abbreviated with L<RDF::NS>. For instance "C<dc:title>" is expanded
+to "C<http://purl.org/dc/elements/1.1/title>".
 
 =cut
 
 =head1 SEE ALSO
 
 L<Catmandu::Exporter>, L<RDF::Trine::Serializer>
+
+=encoding utf8
 
 =cut
 
