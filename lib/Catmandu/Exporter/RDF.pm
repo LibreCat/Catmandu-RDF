@@ -75,7 +75,13 @@ sub _expand_object {
     my ($self,$obj) = @_;
 
     # RDF::Trine allows: plain literal or /^_:/ or /^[a-z0-9._\+-]{1,12}:\S+$/i or /^(.*)\@([a-z]{2})$/)
-    return $obj if !ref $obj;
+    if (!ref $obj) {
+        if ($obj =~ /^[a-z0-9]{1,12}:\S+$/i) {
+            my $uri = $self->uri($obj);
+            return { type => 'uri', value => $uri } if $uri;
+        } 
+        return $obj;
+    }
 
     my ($rdf, $bnode) = { };
 
