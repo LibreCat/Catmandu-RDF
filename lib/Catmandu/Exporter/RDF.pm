@@ -92,7 +92,7 @@ sub _expand_object {
         for (keys %$obj) { # TODO: recurse via _expand_rdf
             next if /^@/;
 
-            my $b_predicate = $self->uri($_);
+            my $b_predicate = $self->uri($_ eq 'a' ? 'rdf:type' : $_);
             my $b_object    = $self->_expand_object($obj->{$_});
 
             push @{ $bnode->{$b_predicate} }, $b_object;
@@ -122,6 +122,7 @@ sub _expand_rdf {
         my ($predicate, $object) = ($p, $data->{$p});
 
         # TODO: disallow http://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml (better in RDF::NS)
+        $predicate = 'rdf:type' if $predicate eq 'a';
         if ($predicate =~ /^([a-z][a-z0-9]*)[:_]/ and $1 ne 'http') {
             $predicate = $self->uri($predicate);
         }
@@ -150,6 +151,8 @@ sub _expand_rdf {
     $exporter->commit;
 
 =head1 DESCRIPTION
+
+Have a look at the unit tests in C<exporter-add.t> for usage examples!
 
 =head1 METHODS
 

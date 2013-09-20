@@ -67,6 +67,12 @@ check_add { type => 'ttl', ns => '20130816' }, {
         'nested RDF';
 };
 
+check_add { type => 'ttl', ns => '20130816' }, {
+    '@id' => 'http://example.org/',
+    a => 'foaf:Organization' 
+} => "<http://example.org> a <http://xmlns.com/foaf/0.1/Organization>\n",
+    '"a" for rdf:type';
+
 ## fixes
 
 check_add { type => 'ttl', ns => '20130816', 
