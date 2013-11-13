@@ -4,7 +4,7 @@ use Test::More;
 
 use Catmandu::Exporter::RDF;
 
-sub check_add(@) {
+sub check_add(@) { ## no critic
     my $options = shift;
     my $data    = shift;
     my $result  = shift;
@@ -24,37 +24,38 @@ sub check_add(@) {
 
 
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://example.org/',
+    '_id' => 'http://example.org/',
     'dc:title' => 'Subject',
 } => "<http://example.org/> <http://purl.org/dc/elements/1.1/title> \"Subject\" .\n",
     'expand predicate URI';
 
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://example.org/',
-    'dc:title' => { '@value' => 'Subject' },
+    '_id' => 'http://example.org/',
+    'dc:title' => 'Subject@',
 } => "<http://example.org/> <http://purl.org/dc/elements/1.1/title> \"Subject\" .\n",
     'literal object';
 
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://example.org/',
-    'dct:extent' => { '@value' => '42', '@type' => 'xsd:integer' },
+    '_id' => 'http://example.org/',
+    'dct:extent' => '42^xsd:integer',
 } => "<http://example.org/> <http://purl.org/dc/terms/extent> 42 .\n",
     'literal object with datatype';
 
+=todo
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://example.org/',
-    'http://example.org/predicate' => { '@id' => 'http://example.com/object' },
+    '_id' => 'http://example.org/',
+    'http://example.org/predicate' => { '_id' => 'http://example.com/object' },
 } => "<http://example.org/> <http://example.org/predicate> <http://example.com/object> .\n",
     'uri object';
 
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://example.org/',
+    '_id' => 'http://example.org/',
     'http://example.org/predicate' => { },
 } => "<http://example.org/> <http://example.org/predicate> _:b1 .\n",
     'blank node object';
 
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://www.gbv.de/',
+    '_id' => 'http://www.gbv.de/',
     'geo:location' => {
         'geo:lat' => '9.93492',
         'geo:long' => '51.5393710',
@@ -66,9 +67,10 @@ check_add { type => 'ttl', ns => '20130816' }, {
     && $ttl =~ qr{<http://www.gbv.de/> <http://www.w3.org/2003/01/geo/wgs84_pos\#location> _:b1},
         'nested RDF';
 };
+=cut
 
 check_add { type => 'ttl', ns => '20130816' }, {
-    '@id' => 'http://example.org/',
+    '_id' => 'http://example.org/',
     a => 'foaf:Organization',
 } => "<http://example.org/> a <http://xmlns.com/foaf/0.1/Organization> .\n",
     '"a" for rdf:type';
@@ -76,7 +78,7 @@ check_add { type => 'ttl', ns => '20130816' }, {
 ## fixes
 
 check_add { type => 'ttl', ns => '20130816', 
-    fix => ["move_field('_id','\@id')","prepend('\@id','http://example.org/');"]
+    fix => ["move_field('_id','\_id')","prepend('\_id','http://example.org/');"]
 }, {
     '_id' => 123,
     'dc:title' => 'Foo',
@@ -85,11 +87,10 @@ check_add { type => 'ttl', ns => '20130816',
 
 check_add { type => 'ttl', ns => '20130816', 
     fix => [
-        "move_field('dc:extent','dc:extent.\@value');",
-        "add_field('dc:extent.\@type','xsd:integer');"
+        "append('dc:extent','^xsd:integer');"
     ]
 }, {
-    '@id' => 'http://example.org/',
+    '_id' => 'http://example.org/',
     'dc:extent' => '42',
 } => "<http://example.org/> <http://purl.org/dc/elements/1.1/extent> 42 .\n",
     'fix predicate';

@@ -7,6 +7,7 @@ use Catmandu::Sane;
 use Moo;
 use RDF::Trine::Serializer;
 use RDF::NS;
+use RDF::aRef;
 
 with 'Catmandu::Exporter';
 
@@ -49,8 +50,10 @@ sub add {
     # TODO: make performant
     my $model = RDF::Trine::Model->new;
 
-    my $rdf = $self->_expand_rdf($data);
-    #use Data::Dumper; say STDERR Dumper($rdf);
+    # TODO: use iterater of statements instead
+
+    my $rdf = RDF::aRef->new( ns => $self->ns )->to_rdfjson( $data );
+    # use Data::Dumper; say Dumper($rdf);
     $model->add_hashref( $rdf );
 
     $self->_data(
@@ -64,84 +67,6 @@ sub commit {
     my ($self) = @_;
 
     $self->serializer->serialize_iterator_to_file( $self->fh, $self->_data );
-}
-
-sub _blank {
-    my ($self) = @_;
-    return '_:b'.++$self->{_blank_id};
-}
-
-sub _expand_object {
-    my ($self,$obj) = @_;
-
-    # RDF::Trine allows: plain literal or /^_:/ or /^[a-z0-9._\+-]{1,12}:\S+$/i or /^(.*)\@([a-z]{2})$/)
-    if (!ref $obj) {
-        if ($obj =~ /^[a-z0-9]{1,12}:\S+$/i) {
-            my $uri = $self->uri($obj);
-            return { type => 'uri', value => $uri } if $uri;
-        } 
-        return $obj;
-    }
-
-    my ($rdf, $bnode) = { };
-
-    if ($obj->{'@id'}) {
-        $rdf = { type => 'uri', value => $obj->{'@id'} };
-    } elsif ($obj->{'@value'}) {
-        $rdf = { type => 'literal', value => $obj->{'@value'} };
-        $rdf->{datatype} = $self->uri($obj->{'@type'}) if defined $obj->{'@type'}; 
-        #TODO #@language
-    } else {
-        $rdf->{type}  = 'bnode';
-        $rdf->{value} = $self->_blank();
-
-        for (keys %$obj) { # TODO: recurse via _expand_rdf
-            next if /^@/;
-
-            my $b_predicate = $self->uri($_ eq 'a' ? 'rdf:type' : $_);
-            my $b_object    = $self->_expand_object($obj->{$_});
-
-            push @{ $bnode->{$b_predicate} }, $b_object;
-        }
-        $bnode = { $rdf->{value} => $bnode } if $bnode;
-    }
-
-    # TODO @type
-    # TODO: _:xx allowed in RDF:NS?
-
-    return ($rdf, $bnode);
-}
-
-sub _expand_rdf {
-    my ($self,$data) = @_;
-
-    return $data unless $data->{'@id'};
-    my $subject = $data->{'@id'};
-
-    my @triples;
-
-    my $statements = {};
-    my $triples = { $subject => $statements };
-
-    foreach my $p (keys %$data) {
-        next if $p eq '@id';
-        my ($predicate, $object) = ($p, $data->{$p});
-
-        # TODO: disallow http://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml (better in RDF::NS)
-        $predicate = 'rdf:type' if $predicate eq 'a';
-        if ($predicate =~ /^([a-z][a-z0-9]*)[:_]/ and $1 ne 'http') {
-            $predicate = $self->uri($predicate);
-        }
-
-        my ($o, $t) = $self->_expand_object($object);
-        push @{ $statements->{$predicate} }, $o;
-
-        if ($t) { # additional triples
-            $triples->{$_} = $t->{$_} for keys %$t;
-        }
-    }
-
-    return $triples;
 }
 
 =head1 SYNOPSIS
@@ -182,8 +107,8 @@ namespace prefixes are stable.
 
 =head2 add( ... )
 
-RDF data can be added as used by L<RDF::Trine::Model/as_hashref> in form of
-hash references.  A simplified form of JSON-LD is be supported as well.
+RDF data can be added in B<Another RDF encoding form (aRef)> as defined at
+L<http://github.com/gbv/aref>. Not all aspects of aRef are supported yet.
 
 =head2 count
 

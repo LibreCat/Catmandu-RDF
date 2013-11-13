@@ -10,16 +10,16 @@ my $file = "";
 my $data = { # example copied from RDF::Trine::Model
   "http://example.com/subject1" => {
     "http://example.com/predicate1" => [
-      { 'type'=>'literal', 'value'=>"Foo", 'lang'=>"en" },
-      { 'type'=>'literal', 'value'=>"Bar", 'datatype'=>"http://example.com/datatype1" },
+        'Foo@en',
+        "Bar^<http://example.com/datatype1>" 
     ],
   },
   "_:bnode1" => {
     "http://example.com/predicate2" => [
-      { 'type'=>'uri', 'value'=>"http://example.com/object2" },
+      "http://example.com/object2",
     ],
     "http://example.com/predicate2" => [
-      { 'type'=>'bnode', 'value'=>"_:bnode3" },
+      "_:bnode3",
     ],
   },
 };
