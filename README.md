@@ -8,4 +8,4 @@ early state of development. Feedback and contributions are very welcome at
 
 [![Build Status](https://travis-ci.org/gbv/Catmandu-RDF.png)](https://travis-ci.org/gbv/Catmandu-RDF)
 [![Coverage Status](https://coveralls.io/repos/gbv/Catmandu-RDF/badge.png?branch=devel)](https://coveralls.io/r/gbv/Catmandu-RDF?branch=devel)
-[![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)
+[![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)](http://cpants.cpanauthors.org/dist/Catmandu-RDF)
