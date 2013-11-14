@@ -2,9 +2,9 @@ use strict;
 use warnings;
 use Test::More;
 
-use RDF::aRef;
+use RDF::aREF;
 
-my $a = RDF::aRef->new;
+my $a = RDF::aREF->new;
 
 my @tests = (
     '@' => { value => '', type => 'literal'  },

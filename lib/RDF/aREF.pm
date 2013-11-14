@@ -1,4 +1,4 @@
-package RDF::aRef;
+package RDF::aREF;
 #ABSTRACT: Another RDF Encoding Form
 our $VERSION = '0.01';
 
@@ -19,15 +19,16 @@ sub new {
 =head1 SYNOPSIS
 
   my $aref = {
-     # aRef RDF data
+     # aREF RDF data
   };
 
-  my $rdfjson = RDF::aRef->new->to_rdfjson( $aref );
+  my $rdfjson = RDF::aREF->new->to_rdfjson( $aref );
   RDF::Trine::Model->add_hashref( $rdfjson );
 
 =cut
 
 # requires Perl 5.12
+use v5.12;
 use feature 'unicode_strings';
 
 our $nameChar = 'A-Z_a-z\N{U+00C0}-\N{U+00D6}\N{U+00D8}-\N{U+00F6}\N{U+00F8}-\N{U+02FF}\N{U+0370}-\N{U+037D}\N{U+037F}-\N{U+1FFF}\N{U+200C}-\N{U+200D}\N{U+2070}-\N{U+218F}\N{U+2C00}-\N{U+2FEF}\N{U+3001}-\N{U+D7FF}\N{U+F900}-\N{U+FDCF}\N{U+FDF0}-\N{U+FFFD}\N{U+10000}-\N{U+EFFFF}';
@@ -193,16 +194,18 @@ sub encoded_object_to_rdfjson {
 
 =head1 DESCRIPTION
 
-This module implements a parser of Another RDF encoding form (aRef). The module
+This module implements a parser of Another RDF encoding form (aREF). The module
 is shipped with L<Catmandu::RDF> but will be refactored to be published as
-independent module on CPAN. As aRef is not finally specified, this module is in
+independent module on CPAN. As aREF is not finally specified, this module is in
 a very early state of development!
 
 =head1 SEE ALSO
 
-aRef is being specified at L<http://github.com/gbv/aref>.
+aREF is being specified at L<http://github.com/gbv/aref>.
 
 See L<RDF::YAML> for an outdated parser/serializer of a similar RDF encoding in
 YAML.
+
+=encoding utf8
 
 =cut
