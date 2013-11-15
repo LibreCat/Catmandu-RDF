@@ -41,7 +41,6 @@ check_add { type => 'ttl', ns => '20130816' }, {
 } => "<http://example.org/> <http://purl.org/dc/terms/extent> 42 .\n",
     'literal object with datatype';
 
-=todo
 check_add { type => 'ttl', ns => '20130816' }, {
     '_id' => 'http://example.org/',
     'http://example.org/predicate' => { '_id' => 'http://example.com/object' },
@@ -50,30 +49,32 @@ check_add { type => 'ttl', ns => '20130816' }, {
 
 check_add { type => 'ttl', ns => '20130816' }, {
     '_id' => 'http://example.org/',
+    a => 'foaf:Organization',
+} => "<http://example.org/> a <http://xmlns.com/foaf/0.1/Organization> .\n",
+    '"a" for rdf:type';
+
+=todo
+check_add { type => 'ttl', ns => '20130816' }, {
+    '_id' => 'http://example.org/',
     'http://example.org/predicate' => { },
 } => "<http://example.org/> <http://example.org/predicate> _:b1 .\n",
     'blank node object';
+=cut
 
 check_add { type => 'ttl', ns => '20130816' }, {
     '_id' => 'http://www.gbv.de/',
     'geo:location' => {
         'geo:lat' => '9.93492',
-        'geo:long' => '51.5393710',
+        'geo_long' => '51.5393710',
     } 
 } => sub {
     my $ttl = shift;
-    ok $ttl =~ qr{_:b1 <http://www.w3.org/2003/01/geo/wgs84_pos\#lat> "9.93492"} 
+    ok $ttl =~ qr{_:[a-zA-Z0-9]+ <http://www.w3.org/2003/01/geo/wgs84_pos\#lat> "9.93492"} 
     && $ttl =~ qr{<http://www.w3.org/2003/01/geo/wgs84_pos\#long> "51.5393710"}
-    && $ttl =~ qr{<http://www.gbv.de/> <http://www.w3.org/2003/01/geo/wgs84_pos\#location> _:b1},
+    && $ttl =~ qr{<http://www.gbv.de/> <http://www.w3.org/2003/01/geo/wgs84_pos\#location> _:[a-zA-Z0-9]+},
         'nested RDF';
 };
-=cut
 
-check_add { type => 'ttl', ns => '20130816' }, {
-    '_id' => 'http://example.org/',
-    a => 'foaf:Organization',
-} => "<http://example.org/> a <http://xmlns.com/foaf/0.1/Organization> .\n",
-    '"a" for rdf:type';
 
 ## fixes
 

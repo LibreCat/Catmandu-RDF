@@ -90,9 +90,32 @@ is_deeply $a->to_rdfjson({
   }
 }, 'Example 23 from JSON-LD';
 
-# TODO
-#    '_id' => 'http://example.org/',
-#    'http://example.org/predicate' => { '_id' => 'http://example.com/object' },
+is_deeply $a->to_rdfjson({ 
+    '_id' => 'http://example.org/',
+    'http://example.org/predicate' => { '_id' => 'http://example.com/object' },
+}),
+ {
+   'http://example.org/' => {
+     'http://example.org/predicate' => [{
+       'type' => 'uri',
+       'value' => 'http://example.com/object'
+     }]
+   }
+ };
+
+my $r = $a->to_rdfjson({
+    '_id' => 'http://example.org/',
+    'http://example.org/predicate' => { },
+});
+my $bnode = delete($r->{'http://example.org/'}{'http://example.org/predicate'}->[0]->{value});
+like $bnode, qr{^_:([a-z0-9]+)$}i, 'bnode';
+is_deeply $r, {
+   'http://example.org/' => {
+     'http://example.org/predicate' => [{
+       'type' => 'bnode',
+     }]
+   }
+};
 
 my $data = { # example copied from RDF::Trine::Model
   "http://example.com/subject1" => {

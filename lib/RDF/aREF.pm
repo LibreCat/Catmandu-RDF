@@ -38,7 +38,9 @@ our $name   = "[$nameStartChar][$nameChar]*";
 our $prefixedName = "$prefix:$name";
 
 # TODO
-our $SimplfiedIRIRegexp = qr{^[a-z][a-z0-9+.-]*:}i;
+our $plainIRI = qr{^[a-z][a-z0-9+.-]*:}i;
+
+our $blankNode = qr{^_:([a-z0-9]+)$}i;
 
 # object string
 sub object_to_rdfjson {
@@ -50,7 +52,7 @@ sub object_to_rdfjson {
         return { value => $iri, type => 'uri' };
 
     # blank node
-    } elsif ($string =~ /^_:([a-zA-Z0-9]+)$/) {
+    } elsif ($string =~ $blankNode) {
         return { value => $string, type => "bnode" };
 
     # prefixedName
@@ -86,8 +88,8 @@ sub object_to_rdfjson {
         return { value => $string, type => 'literal' };
 
     # plainIRI
-    } elsif ($string =~ $SimplfiedIRIRegexp) {
-        # TODO: validate more (?)
+    } elsif ($string =~ $plainIRI) {
+        # TODO: validate syntax according to RFC 3987
         return { value => $string, type => 'uri' };
     }
 
@@ -121,31 +123,37 @@ sub subject {
     # prefixed name (also with '_')
     } elsif ($subject =~ /^($prefix)[:_]($name)$/) {
         $subject = $self->prefixedName($1,$3);
-    }
+    } 
 
+    # TODO: should match plainIRI
+    
     return $subject;
 }
 
+# TODO: implement to_iterator instead
 sub to_rdfjson {
     my ($self, $graph) = @_;
+
+    # TODO: _ns
 
     # property map
     if ($graph->{_id}) {
         my $subject = $self->subject($graph->{_id});    
+        return $self->property_map_to_rdfjson( $subject => $graph ),
 
-        return {
-            $subject => $self->property_map_to_rdfjson($graph),
-        };
     # subject map
     } else {
-        return {
-            map { 
-                ($self->subject($_) =>  
-                 $self->property_map_to_rdfjson($graph->{$_}))
+        my $rdfjson = { };
+        foreach my $subject ( grep { $_ ne '_ns' } keys %$graph ) {
+            my $rdf = $self->property_map_to_rdfjson( 
+                $self->subject($subject) => $graph->{$subject}
+            );
+            # merge (TODO: just return triples)
+            foreach (keys %$rdf) {
+                $rdfjson->{$_} = $rdf->{$_};
             }
-            keys %$graph
-        };
-        # TODO
+        }
+        return $rdfjson;
     }
 }
 
@@ -170,24 +178,80 @@ sub property {
 }
 
 sub property_map_to_rdfjson {
-    my ($self, $map) = @_;
-    return { 
+    my ($self, $subject, $map) = @_;
+    
+    my $statements = { };
+
+    my $predicate_map = {
         map {
-            $self->property($_) => $self->encoded_object_to_rdfjson($map->{$_})
+            my ($object, $stms) = 
+                $self->encoded_object_to_rdfjson($map->{$_});
+
+            # TODO: merge instead of replace, also different oid forms
+            $statements = $stms if $stms and %$stms;
+
+            ($self->property($_) => $object);
         } grep { $_ ne '_id' and $_ ne '_ns' } keys %$map
+    };
+
+    my $rdfjson = %$predicate_map ? { $subject => $predicate_map } : { };
+
+    # Merge
+    if (%$statements) {
+        # TODO: merge instead replace
+        for (keys %$statements) {
+            $rdfjson->{$_} = $statements->{$_};
+        }
     }
+    
+    return $rdfjson;
 }
+
+use Scalar::Util qw(reftype);
 
 sub encoded_object_to_rdfjson {
     my ($self, $object) = @_;
 
-    if (!ref $object) {
+    my $ref = reftype $object;
+
+    if (!$ref) {
         return [ $self->object_to_rdfjson($object) ];
-    } elsif(ref $object ne 'ARRAY') {
-        die "encoded object must be a list!\n";
+    } elsif($ref eq 'ARRAY') {
+        return [ map { $self->object_to_rdfjson($_); } @$object ];
+    } elsif($ref eq 'HASH') {
+        my $id = $object->{_id};
+
+        if (!defined $id) {
+            $id = $self->blank_id;
+        } elsif ($id =~ /^<(.+)>$/) {
+            $id = $1;
+        } elsif ($id =~ /^($prefix)[:_]($name)$/) {
+            $id = $self->prefixedName($1,$3);
+        }
+
+        my $obj;
+        if ($id =~ $blankNode) {
+            $obj = { value => $id, type => "bnode" };
+        } elsif ($id =~ $plainIRI) {
+            $obj = { value => $id, type => "uri" };
+        } else {
+            die "expected IRI or blank node, got ".$object->{_id}."\n";
+        }
+
+        my $statements = $self->property_map_to_rdfjson( $id => $object );
+
+        return [ $obj ], $statements;
+
+    } else {
+        print $object;
+        die "encoded object must be a string, list, or predicate map!\n";
     }
 
-    return [ map { $self->object_to_rdfjson($_); } @$object ];
+}
+
+sub blank_id {
+    my ($self) = @_;
+    return '_:'.++$self->{blank_counter};
 }
 
 1;
