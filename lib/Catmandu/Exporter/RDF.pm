@@ -7,7 +7,7 @@ use Catmandu::Sane;
 use Moo;
 use RDF::Trine::Serializer;
 use RDF::NS;
-use RDF::aREF;
+use RDF::aREF qw(aref_to_trine_statement decode_aref);
 
 with 'Catmandu::Exporter';
 
@@ -43,19 +43,23 @@ sub _build_serializer {
 }
 
 sub add {
-    my ($self, $data) = @_;
+    my ($self, $aref) = @_;
 
     $self->_data(RDF::Trine::Iterator->new()) unless $self->_data;
 
-    # TODO: make performant
+    # TODO: directly use Iterator instead of Model (slow!!!)
+    
     my $model = RDF::Trine::Model->new;
-
-    # TODO: use iterater of statements instead
-
-    my $rdf = RDF::aREF->new( ns => $self->ns )->to_rdfjson( $data );
-    # use Data::Dumper; say Dumper($rdf);
-    $model->add_hashref( $rdf );
-
+    $model->begin_bulk_ops;
+    # TODO: share decoder for performance
+    decode_aref(
+        $aref,
+        ns => $self->ns, 
+        callback => sub {
+            $model->add_statement( aref_to_trine_statement( @_ ) ) 
+        } 
+    );
+    $model->end_bulk_ops;
     $self->_data(
         $self->_data->concat( $model->as_stream )
     );
