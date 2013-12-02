@@ -15,6 +15,8 @@ contributions are very welcome at L<https://github.com/nichtich/Catmandu-RDF>!
 =item L<Catmandu::Exporter::RDF>
 
 Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...).
+RDF data must be provided in B<another RDF Encoding Form (aREF)> as 
+implemented with L<RDF::aREF>.
 
 =back
 
@@ -47,7 +49,7 @@ Export RDF with HTTP PATCH.
 
 =head1 SEE ALSO
 
-L<Catmandu>, L<RDF::Trine>, L<RDF::NS>
+L<Catmandu>, L<RDF::aREF>, L<RDF::Trine>, L<RDF::NS>
 
 =cut
 

@@ -111,8 +111,8 @@ namespace prefixes are stable.
 
 =head2 add( ... )
 
-RDF data can be added in B<Another RDF Encoding Form (aREF)> as defined at
-L<http://github.com/gbv/aref>. Not all aspects of aREF are supported yet.
+RDF data is added given in B<another RDF Encoding Form (aREF)> as 
+implemented with L<RDF::aREF> and defined at L<http://github.com/gbv/aref>.
 
 =head2 count
 
