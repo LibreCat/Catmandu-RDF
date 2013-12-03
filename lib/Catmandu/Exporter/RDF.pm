@@ -83,11 +83,9 @@ sub commit {
         fix  => 'rdf.fix'
     );
 
+    $exporter->add( $aref ); # pass RDF data in aREF encoding
+
     $exporter->commit;
-
-=head1 DESCRIPTION
-
-Have a look at the unit tests in C<exporter-add.t> for usage examples!
 
 =head1 METHODS
 
