@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 package Catmandu::RDF;
 # ABSTRACT: Modules for handling RDF data within the Catmandu framework
 # VERSION
