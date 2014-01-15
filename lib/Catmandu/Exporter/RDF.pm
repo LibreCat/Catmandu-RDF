@@ -7,7 +7,7 @@ use Catmandu::Sane;
 use Moo;
 use RDF::Trine::Serializer;
 use RDF::NS;
-use RDF::aREF qw(aref_to_trine_statement decode_aref);
+use RDF::aREF qw(decode_aref);
 
 with 'Catmandu::Exporter';
 
@@ -51,18 +51,10 @@ sub add {
     
     my $model = RDF::Trine::Model->new;
     $model->begin_bulk_ops;
-    # TODO: share decoder for performance
-    decode_aref(
-        $aref,
-        ns => $self->ns, 
-        callback => sub {
-            $model->add_statement( aref_to_trine_statement( @_ ) ) 
-        } 
-    );
+    # TODO: share decoder for better performance
+    decode_aref( $aref, ns => $self->ns, callback => $model );
     $model->end_bulk_ops;
-    $self->_data(
-        $self->_data->concat( $model->as_stream )
-    );
+    $self->_data( $self->_data->concat( $model->as_stream ));
 
     # $self->commit; # TODO: enable streaming serialization this way?
 }
