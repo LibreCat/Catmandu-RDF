@@ -38,7 +38,7 @@ $file .= "\n" unless $file =~ /\n$/m;
 
 is $file, <<'RDF', 'serialize Turtle';
 <http://example.com/subject1> <http://example.com/predicate1> "Bar"^^<http://example.com/datatype1>, "Foo"@en .
-_:1 <http://example.com/predicate2> _:2 .
+_:b1 <http://example.com/predicate2> _:b2 .
 RDF
 
 is $exporter->count, 1, 'count is always one';
