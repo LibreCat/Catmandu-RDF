@@ -6,24 +6,11 @@ use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 use RDF::Trine::Serializer;
+use RDF::Trine::Model;
 use RDF::NS;
-use RDF::aREF qw(decode_aref);
+use RDF::aREF;
 
 with 'Catmandu::Exporter';
-
-has type => (is => 'ro', default => sub { 'RDFXML' });
-has serializer => (is => 'ro', lazy => 1, builder => '_build_serializer' );
-
-# experimental
-has _data => (is => 'rw');
-has ns => (
-    is => 'ro', 
-    default => sub { RDF::NS->new() },
-    coerce => sub {
-        (!ref $_[0] or ref $_[0] ne 'RDF::NS') ? RDF::NS->new(@_) : $_[0];
-    },
-    handles => ['uri'],
-);
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -33,36 +20,55 @@ our %TYPE_ALIAS = (
     Json => 'RDFJSON',
 );
 
-sub _build_serializer {
-    my ($self) = @_;
+has type => (
+    is => 'ro', 
+    default => sub { 'RDFXML' }, 
+    coerce => sub { my $t = ucfirst($_[0]); $TYPE_ALIAS{$t} // $t },
+);
 
-    my $type = ucfirst($self->type);
-    $type = $TYPE_ALIAS{$type} if $TYPE_ALIAS{$type};
+has ns => (
+    is => 'ro', 
+    default => sub { RDF::NS->new() },
+    coerce => sub {
+        (!ref $_[0] or ref $_[0] ne 'RDF::NS') ? RDF::NS->new(@_) : $_[0];
+    },
+    handles => ['uri'],
+);
 
-    RDF::Trine::Serializer->new($type); # TODO: base_uri  and  namespaces
-}
+# internal attributes
+
+has decoder => (
+    is => 'ro',
+    lazy => 1, 
+    builder => sub {
+        RDF::aREF::Decoder->new( ns => $_[0]->ns, callback => $_[0]->model );
+    }
+);
+
+has serializer => (
+    is => 'ro', 
+    lazy => 1, 
+    builder => sub {
+        # TODO: base_uri and namespaces
+        RDF::Trine::Serializer->new($_[0]->type)
+    }
+);
+
+has model => (
+    is => 'ro', 
+    lazy => 1, 
+    builder => sub { RDF::Trine::Model->new }
+);
 
 sub add {
     my ($self, $aref) = @_;
-
-    $self->_data(RDF::Trine::Iterator->new()) unless $self->_data;
-
-    # TODO: directly use Iterator instead of Model (slow!!!)
-    
-    my $model = RDF::Trine::Model->new;
-    $model->begin_bulk_ops;
-    # TODO: share decoder for better performance
-    decode_aref( $aref, ns => $self->ns, callback => $model );
-    $model->end_bulk_ops;
-    $self->_data( $self->_data->concat( $model->as_stream ));
-
-    # $self->commit; # TODO: enable streaming serialization this way?
+    $self->decoder->decode($aref);
 }
 
 sub commit {
     my ($self) = @_;
-
-    $self->serializer->serialize_iterator_to_file( $self->fh, $self->_data );
+    $self->model->end_bulk_ops;
+    $self->serializer->serialize_model_to_file( $self->fh, $self->model );
 }
 
 =head1 SYNOPSIS

@@ -25,6 +25,6 @@ is_deeply [ sort split "\n", $turtle ], [
     '<http://x.org/alice> <http://xmlns.com/foaf/0.1/knows> <http://x.org/bob>, <http://x.org/claire> ;',
     '<http://x.org/bob> a <http://xmlns.com/foaf/0.1/Person> ;'
 ];
-#print $turtle;
+print $turtle;
 
 done_testing;
