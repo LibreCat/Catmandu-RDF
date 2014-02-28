@@ -112,7 +112,9 @@ implemented with L<RDF::aREF> and defined at L<http://github.com/gbv/aref>.
 
 =head2 count
 
-Always returns 1 or 0 (there is only one RDF graph in a RDF document).
+Returns the number of times C<add> has been called. In contrast to other
+Catmandu exporters, this does not reflect the number of exporter records
+because RDF data is always merged to one RDF graph.
 
 =head2 uri( $uri )
 
