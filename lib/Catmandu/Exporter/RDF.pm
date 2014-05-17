@@ -1,6 +1,6 @@
 package Catmandu::Exporter::RDF;
 # ABSTRACT: serialize RDF data
-# VERSION
+our $VERSION = '0.14'; # VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -71,6 +71,24 @@ sub commit {
     $self->serializer->serialize_model_to_file( $self->fh, $self->model );
 }
 
+
+
+1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Catmandu::Exporter::RDF - serialize RDF data
+
+=head1 VERSION
+
+version 0.14
+
 =head1 SYNOPSIS
 
     use Catmandu::Exporter::RDF;
@@ -119,14 +137,19 @@ Always returns 1 or 0 (there is only one RDF graph in a RDF document).
 Expand and abbreviated with L<RDF::NS>. For instance "C<dc:title>" is expanded
 to "C<http://purl.org/dc/elements/1.1/title>".
 
-=cut
-
 =head1 SEE ALSO
 
 L<Catmandu::Exporter>, L<RDF::Trine::Serializer>
 
-=encoding utf8
+=head1 AUTHOR
+
+Jakob Voß
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Jakob Voß.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-1;

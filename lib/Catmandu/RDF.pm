@@ -2,7 +2,24 @@ use strict;
 use warnings;
 package Catmandu::RDF;
 # ABSTRACT: Modules for handling RDF data within the Catmandu framework
-# VERSION
+our $VERSION = '0.14'; # VERSION
+
+
+1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
+
+=head1 VERSION
+
+version 0.14
 
 =head1 DESCRIPTION
 
@@ -47,12 +64,19 @@ Export RDF with HTTP PATCH.
 
 =back
 
-=encoding utf8
-
 =head1 SEE ALSO
 
 L<Catmandu>, L<RDF::aREF>, L<RDF::Trine>, L<RDF::NS>
 
-=cut
+=head1 AUTHOR
 
-1;
+Jakob Voß
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Jakob Voß.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

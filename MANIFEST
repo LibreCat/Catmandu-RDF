@@ -1,0 +1,12 @@
+CHANGES
+LICENSE
+MANIFEST
+META.yml
+Makefile.PL
+README
+cpanfile
+lib/Catmandu/Exporter/RDF.pm
+lib/Catmandu/RDF.pm
+t/exporter-add.t
+t/exporter.t
+t/issue-3.t
