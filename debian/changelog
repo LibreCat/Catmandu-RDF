@@ -1,0 +1,6 @@
+libcatmandu-rdf-perl (0.14-1) unstable; urgency=low
+
+  * Initial Release.
+    Closes: bug#723160.
+
+ -- Jonas Smedegaard <dr@jones.dk>  Sun, 18 May 2014 03:37:41 +0200

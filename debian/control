@@ -1,0 +1,30 @@
+Source: libcatmandu-rdf-perl
+Section: perl
+Priority: optional
+Build-Depends: cdbs,
+ devscripts,
+ perl,
+ debhelper,
+ dh-buildinfo,
+ libcatmandu-perl,
+ librdf-trine-perl,
+ librdf-aref-perl,
+ librdf-ns-perl (>= 20130816)
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Uploaders: Jonas Smedegaard <dr@jones.dk>,
+ Vasudev Kamath <kamathvasudev@gmail.com>
+Standards-Version: 3.9.5
+Vcs-Git: git://anonscm.debian.org/pkg-perl/packages/libcatmandu-rdf-perl
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-perl/packages/libcatmandu-rdf-perl.git
+Homepage: https://github.com/gbv/Catmandu-RDF
+
+Package: libcatmandu-rdf-perl
+Architecture: all
+Depends: ${perl:Depends}, ${misc:Depends}, ${cdbs:Depends}
+Enhances: ${cdbs:Enhances}
+Description: modules for handling RDF data within the Catmandu framework
+ Catmandu provides a suite of Perl modules to ease the import, storage,
+ retrieval, export and transformation of metadata records.
+ .
+ Catmandu::RDF contains modules for handling RDF data within the Catmandu
+ framework.
