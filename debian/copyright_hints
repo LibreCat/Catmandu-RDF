@@ -13,6 +13,7 @@ Files: CHANGES
  debian/compat
  debian/control
  debian/control.in
+ debian/gbp.conf
  debian/source/format
  debian/watch
  t/exporter-add.t
