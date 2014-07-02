@@ -1,6 +1,7 @@
 libcatmandu-rdf-perl (0.14-2) UNRELEASED; urgency=medium
 
   * Add git-buildpackage config, enabling pristine-tar and tag signing.
+  * Update watch file: Fix strip spaces in version line.
 
  -- Jonas Smedegaard <dr@jones.dk>  Mon, 23 Jun 2014 02:26:30 +0200
 
