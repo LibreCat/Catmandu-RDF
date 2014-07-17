@@ -1,8 +1,34 @@
-use strict;
-use warnings;
 package Catmandu::RDF;
-# ABSTRACT: Modules for handling RDF data within the Catmandu framework
-# VERSION
+#ABSTRACT: Modules for handling RDF data within the Catmandu framework
+#VERSION
+
+use namespace::clean;
+use Catmandu::Sane;
+use Moo::Role;
+use RDF::NS;
+
+our %TYPE_ALIAS = (
+    Ttl  => 'Turtle',
+    N3   => 'Notation3',
+    Xml  => 'RDFXML',
+    XML  => 'RDFXML',
+    Json => 'RDFJSON',
+);
+
+has type => (
+    is => 'ro', 
+    coerce => sub { my $t = ucfirst($_[0]); $TYPE_ALIAS{$t} // $t },
+);
+
+has ns => (
+    is => 'ro', 
+    default => sub { RDF::NS->new() },
+    coerce => sub {
+        (!ref $_[0] or ref $_[0] ne 'RDF::NS') ? RDF::NS->new(@_) : $_[0];
+    },
+    handles => ['uri'],
+);
+
 
 =head1 DESCRIPTION
 
