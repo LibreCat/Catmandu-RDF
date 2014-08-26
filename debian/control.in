@@ -7,7 +7,7 @@ Uploaders: Jonas Smedegaard <dr@jones.dk>,
  Vasudev Kamath <kamathvasudev@gmail.com>
 Standards-Version: 3.9.5
 Vcs-Git: git://anonscm.debian.org/pkg-perl/packages/libcatmandu-rdf-perl
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-perl/packages/libcatmandu-rdf-perl.git
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-perl/packages/libcatmandu-rdf-perl.git
 Homepage: https://github.com/gbv/Catmandu-RDF
 
 Package: libcatmandu-rdf-perl
