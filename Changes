@@ -1,0 +1,50 @@
+Changelog for Catmandu-RDF
+
+0.15 2014-07-17T11:35:16
+ - document and test count method (Jakob Voss)
+ - started importer (Jakob Voss)
+
+0.14 2014-01-22T07:18:56
+ - internally use RDF::Trine::Model (Jakob Voss)
+ - bug detected (issue #3?) (Jakob Voss)
+ - use RDF::aREF 0.09 (Jakob Voss)
+
+0.13 2014-01-15T12:15:56
+ - Merge release (Jakob Voss)
+ - use RDF::aREF 0.08 (Jakob Voss)
+
+0.12 2014-01-12T16:39:03
+ - release 0.12 with fixed dependencies (Jakob Voss)
+ - update dependencies (Jakob Voss)
+ - fixed dist.ini (Jakob Voss)
+ - fixed dependency (Jakob Voss)
+
+0.11 2013-12-02T14:17:01
+ - documentation (Jakob Voss)
+ - fixed cpanfile (Jakob Voss)
+ - don't test ob Perl 5.10 (Jakob Voss)
+ - split RDF::aREF as independent module (Jakob Voss)
+
+0.10 2013-11-15T11:18:20
+ - started to support nested input documents (Jakob Voss)
+ - renamed aRef to aREF (Jakob Voss)
+
+0.09 2013-11-13T14:29:24
+ - migrated from RDF/JSON to aRef (Jakob Voss)
+ - fix link (Jakob Voss)
+
+0.03 2013-09-20T12:42:10
+ - auto-expand prefixed object-uris (Jakob Voss)
+ - support 'a' as shortcut for 'rdf:type' (Jakob Voss)
+ - extended documentation (Jakob Voss)
+ - implemented basic Exporter (Jakob Voss)
+ - support a subset of JSON-LD (Jakob Voss)
+ - use dzil and travis (Jakob Voss)
+
+0.02 2013-09-06T09:14:51
+ - documentation (Jakob Voss)
+
+0.01 2013-09-05T09:39:00
+ - basic RDF Exporter (Jakob Voss)
+ - first draft (Jakob Voss)
+

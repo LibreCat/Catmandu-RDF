@@ -43,4 +43,14 @@ RDF
 
 is $exporter->count, 1, 'count is always one';
 
+# keep blank nodes separated
+$file = "";
+$exporter = $pkg->new(file => \$file, type => 'ntriples');
+
+$exporter->add( { _id => '<x:subject>', foaf_knows => { foaf_name => 'alice' } } );
+$exporter->add( { _id => '<x:subject>', foaf_knows => { foaf_name => 'alice' } } );
+$exporter->commit;
+is scalar(split "\n", $file), 4, 'keep blank nodes separated';
+is $exporter->count, 2, 'count is 2';
+
 done_testing;
