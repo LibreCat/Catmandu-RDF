@@ -1,39 +1,16 @@
 package Catmandu::Exporter::RDF;
-# ABSTRACT: serialize RDF data
-our $VERSION = '0.14'; # VERSION
+#ABSTRACT: serialize RDF data
+our $VERSION = '0.15'; #VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 use RDF::Trine::Serializer;
 use RDF::Trine::Model;
-use RDF::NS;
 use RDF::aREF;
 
+with 'Catmandu::RDF';
 with 'Catmandu::Exporter';
-
-our %TYPE_ALIAS = (
-    Ttl  => 'Turtle',
-    N3   => 'Notation3',
-    Xml  => 'RDFXML',
-    XML  => 'RDFXML',
-    Json => 'RDFJSON',
-);
-
-has type => (
-    is => 'ro', 
-    default => sub { 'RDFXML' }, 
-    coerce => sub { my $t = ucfirst($_[0]); $TYPE_ALIAS{$t} // $t },
-);
-
-has ns => (
-    is => 'ro', 
-    default => sub { RDF::NS->new() },
-    coerce => sub {
-        (!ref $_[0] or ref $_[0] ne 'RDF::NS') ? RDF::NS->new(@_) : $_[0];
-    },
-    handles => ['uri'],
-);
 
 # internal attributes
 
@@ -50,7 +27,7 @@ has serializer => (
     lazy => 1, 
     builder => sub {
         # TODO: base_uri and namespaces
-        RDF::Trine::Serializer->new($_[0]->type)
+        RDF::Trine::Serializer->new($_[0]->type // 'RDFXML')
     }
 );
 
@@ -87,7 +64,7 @@ Catmandu::Exporter::RDF - serialize RDF data
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 
@@ -130,7 +107,9 @@ implemented with L<RDF::aREF> and defined at L<http://github.com/gbv/aref>.
 
 =head2 count
 
-Always returns 1 or 0 (there is only one RDF graph in a RDF document).
+Returns the number of times C<add> has been called. In contrast to other
+Catmandu exporters, this does not reflect the number of exporter records
+because RDF data is always merged to one RDF graph.
 
 =head2 uri( $uri )
 

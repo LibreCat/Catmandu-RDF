@@ -4,28 +4,31 @@ author:
   - 'Jakob Voß'
 build_requires: {}
 configure_requires:
-  ExtUtils::MakeMaker: 6.30
+  ExtUtils::MakeMaker: '6.30'
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.132830'
+generated_by: 'Dist::Zilla version 5.019, CPAN::Meta::Converter version 2.141520'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+  version: '1.4'
 name: Catmandu-RDF
 provides:
   Catmandu::Exporter::RDF:
     file: lib/Catmandu/Exporter/RDF.pm
-    version: 0.14
+    version: '0.15'
+  Catmandu::Importer::RDF:
+    file: lib/Catmandu/Importer/RDF.pm
+    version: '0.15'
   Catmandu::RDF:
     file: lib/Catmandu/RDF.pm
-    version: 0.14
+    version: '0.15'
 requires:
-  Catmandu: 0.7
-  RDF::NS: 20130816
-  RDF::Trine: 1.0
-  RDF::aREF: 0.09
+  Catmandu: '0.7'
+  RDF::NS: '20130816'
+  RDF::Trine: '1.0'
+  RDF::aREF: '0.09'
 resources:
   bugtracker: https://github.com/gbv/Catmandu-RDF/issues
   homepage: https://github.com/gbv/Catmandu-RDF
   repository: https://github.com/gbv/Catmandu-RDF.git
-version: 0.14
+version: '0.15'
