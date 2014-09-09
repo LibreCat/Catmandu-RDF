@@ -4,6 +4,7 @@ package Catmandu::RDF;
 
 use namespace::clean;
 use Catmandu::Sane;
+use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
 
@@ -15,6 +16,7 @@ our %TYPE_ALIAS = (
     Json => 'RDFJSON',
 );
 
+# todo use 'file' to guess type
 has type => (
     is => 'ro', 
     coerce => sub { my $t = ucfirst($_[0]); $TYPE_ALIAS{$t} // $t },
@@ -22,13 +24,14 @@ has type => (
 
 has ns => (
     is => 'ro', 
-    default => sub { RDF::NS->new() },
+    default => sub { RDF::NS->new },
     coerce => sub {
-        (!ref $_[0] or ref $_[0] ne 'RDF::NS') ? RDF::NS->new(@_) : $_[0];
+        return $_[0] if is_instance($_[0],'RDF::NS');
+        return if !$_[0];
+        return RDF::NS->new($_[0]);
     },
     handles => ['uri'],
 );
-
 
 =head1 DESCRIPTION
 
@@ -46,6 +49,10 @@ Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...).
 RDF data must be provided in B<another RDF Encoding Form (aREF)> as 
 implemented with L<RDF::aREF>.
 
+=item L<Catmandu::Importer::RDF>
+
+Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...).
+
 =back
 
 =head1 SUGGESTED MODULES
@@ -54,10 +61,6 @@ The following modules have not been implemented yet. Please contribute or
 comment if you miss them!
 
 =over 4
-
-=item C<Catmandu::Importer::RDF>
-
-Import serialized RDF data (RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...).
 
 =item C<Catmandu::Importer::SPARQL>
 
@@ -77,7 +80,8 @@ Export RDF with HTTP PATCH.
 
 =head1 SEE ALSO
 
-L<Catmandu>, L<RDF::aREF>, L<RDF::Trine>, L<RDF::NS>
+This module is based on L<Catmandu>, L<RDF::aREF>, L<RDF::Trine>, and
+L<RDF::NS>.
 
 =cut
 
