@@ -9,7 +9,7 @@ Build-Depends: cdbs,
  libcatmandu-perl,
  librdf-trine-perl,
  librdf-aref-perl,
- librdf-ns-perl (>= 20130816)
+ librdf-ns-perl (>= 20140910)
 Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
 Uploaders: Jonas Smedegaard <dr@jones.dk>,
  Vasudev Kamath <kamathvasudev@gmail.com>

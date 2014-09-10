@@ -1,3 +1,15 @@
+libcatmandu-rdf-perl (0.16-1) unstable; urgency=medium
+
+  [ upstream ]
+  * New release:
+    + improve RDF importer.
+
+  [ Jonas Smedegaard ]
+  * Update package relations:
+    + Tighten (build-)dependency on librdf-ns-perl.
+
+ -- Jonas Smedegaard <dr@jones.dk>  Wed, 10 Sep 2014 13:54:20 +0200
+
 libcatmandu-rdf-perl (0.15-1) unstable; urgency=medium
 
   [ upstream ]
