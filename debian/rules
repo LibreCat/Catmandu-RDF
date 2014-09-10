@@ -29,7 +29,7 @@ DEB_UPSTREAM_URL = http://www.cpan.org/authors/id/V/VO/VOJ
 # Needed by upstream build and (always) at runtime
 perl-deps = catmandu rdf-trine rdf-aref
 deps = $(patsubst %,$(comma) lib%-perl, $(perl-deps))
-deps +=, librdf-ns-perl (>= 20130816)
+deps +=, librdf-ns-perl (>= 20140910)
 
 CDBS_BUILD_DEPENDS +=, $(deps)
 CDBS_DEPENDS_$(pkg) = $(deps)
