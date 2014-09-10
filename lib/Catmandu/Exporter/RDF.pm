@@ -1,6 +1,6 @@
 package Catmandu::Exporter::RDF;
 #ABSTRACT: serialize RDF data
-our $VERSION = '0.15'; #VERSION
+our $VERSION = '0.16'; #VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -13,12 +13,14 @@ with 'Catmandu::RDF';
 with 'Catmandu::Exporter';
 
 # internal attributes
-
 has decoder => (
     is => 'ro',
     lazy => 1, 
     builder => sub {
-        RDF::aREF::Decoder->new( ns => $_[0]->ns, callback => $_[0]->model );
+        RDF::aREF::Decoder->new( 
+            ns => $_[0]->ns // ($_[0]->ns eq 0 ? { } : RDF::NS->new),
+            callback => $_[0]->model 
+        );
     }
 );
 
@@ -64,7 +66,7 @@ Catmandu::Exporter::RDF - serialize RDF data
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -80,11 +82,27 @@ version 0.15
 
     $exporter->commit;
 
-=head1 METHODS
+=head1 DESCRIPTION
 
-=head2 new(file => $file, type => $type, %options)
+This L<Catmandu::Exporter> exports RDF data in different RDF serializations.
 
-Create a new Catmandu RDF exporter which serializes into a file or to STDOUT.
+=head1 CONFIGURATION
+
+=over
+
+=item file
+
+=item fh
+
+=item encoding
+
+=item fix
+
+Default configuration options of L<Catmandu::Exporter>.  The option C<fix> is
+supported as derived from L<Catmandu::Fixable>. For every C<add> or for every
+item in C<add_many> the given fixes will be applied first.
+
+=item type
 
 A serialization form can be set with option C<type>. The option C<type> must
 refer to a subclass name of L<RDF::Trine::Serializer>, for instance C<Turtle>
@@ -93,12 +111,15 @@ transformed uppercase, so C<< format => 'turtle' >> will work as well. In
 addition there are aliases C<ttl> for C<Turtle>, C<n3> for C<Notation3>, C<xml>
 and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
 
-The option C<fix> is supported as derived from L<Catmandu::Fixable>. For every
-C<add> or for every item in C<add_many> the given fixes will be applied first.
+=item ns
 
 The option C<ns> can refer to an instance of or to a constructor argument of
 L<RDF::NS>. Use a fixed date, such as "C<20130816>" to make sure your URI
 namespace prefixes are stable.
+
+=head1 METHODS
+
+See also L<Catmandu::Exporter>.
 
 =head2 add( ... )
 
@@ -118,7 +139,7 @@ to "C<http://purl.org/dc/elements/1.1/title>".
 
 =head1 SEE ALSO
 
-L<Catmandu::Exporter>, L<RDF::Trine::Serializer>
+Serialization is based on L<RDF::Trine::Serializer>.
 
 =head1 AUTHOR
 

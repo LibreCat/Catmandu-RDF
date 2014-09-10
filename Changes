@@ -1,6 +1,9 @@
 Changelog for Catmandu-RDF
 
-0.15 2014-07-17T11:35:16
+0.16 2014-09-10T10:20:56
+ - improve RDF importer (Jakob Voss)
+
+0.15 2014-07-17T11:35:04
  - document and test count method (Jakob Voss)
  - started importer (Jakob Voss)
 
