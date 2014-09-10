@@ -20,12 +20,12 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Catmandu::RDF",
   "PREREQ_PM" => {
-    "Catmandu" => "0.7",
-    "RDF::NS" => 20130816,
+    "Catmandu" => "0.9",
+    "RDF::NS" => 20140910,
     "RDF::Trine" => "1.0",
-    "RDF::aREF" => "0.09"
+    "RDF::aREF" => "0.11"
   },
-  "VERSION" => "0.15",
+  "VERSION" => "0.16",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -33,10 +33,10 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
-  "Catmandu" => "0.7",
-  "RDF::NS" => 20130816,
+  "Catmandu" => "0.9",
+  "RDF::NS" => 20140910,
   "RDF::Trine" => "1.0",
-  "RDF::aREF" => "0.09"
+  "RDF::aREF" => "0.11"
 );
 
 

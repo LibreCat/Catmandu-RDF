@@ -1,6 +1,6 @@
 package Catmandu::Importer::RDF;
-#ABSTRACT: retrieve RDF data
-our $VERSION = '0.15'; #VERSION
+#ABSTRACT: parse RDF data
+our $VERSION = '0.16'; #VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -8,11 +8,22 @@ use Moo;
 use RDF::Trine::Parser;
 use RDF::Trine::Model;
 use RDF::aREF;
+use RDF::NS;
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
 
-has url => (is => 'ro');
+has url => (
+    is => 'ro'
+);
+
+has 'sn' => (
+    is => 'ro',
+    lazy    => 1, 
+    builder => sub {
+        $_[0]->ns ? $_[0]->ns->REVERSE : undef
+    }
+);
 
 has base => (
     is      => 'ro', 
@@ -23,21 +34,37 @@ has base => (
 );
 
 # TODO: move to RDF::aREF
+sub uri2aref {
+    my ($self, $uri, $sep) = @_;
+
+    return 'a' if $uri eq 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
+
+    if ($self->sn) {
+        my @qname = $self->sn->qname($uri);
+        return join($sep,@qname) if @qname;
+    }
+
+    return $uri;
+}
+# TODO: move to RDF::aREF
 sub rdfjson2aref {
-    my ($object) = @_;
+    my ($self, $object) = @_;
     if ($object->{type} eq 'literal') {
         my $value = $object->{value};
         if ($object->{lang}) {
             return $value.'@'.$object->{lang};
         } elsif ($object->{datatype}) {
-            return "$value^<".$object->{datatype}.">";
+            my $dt = $self->uri2aref($object->{datatype},':');
+            $dt = "<$dt>" if $dt eq $object->{datatype};
+            return "$value^$dt";
         } else {
             return "$value@";
         }
     } elsif ($object->{type} eq 'bnode') {
         return $object->{value};
     } else {
-        return "<" . $object->{value} . ">";
+        my $obj = $self->uri2aref($object->{value},':');
+        return ($obj eq $object->{value} ? "<$obj>" : $obj);
     }
 }
 
@@ -50,9 +77,14 @@ sub generator {
         my $aref;
         $stream = $stream->as_hashref;
         # TODO if size = 1 use _id => $key
+        # TODO: include namespace mappings if requested
         while (my ($s,$ps) = each %$stream) {
             foreach my $p (keys %$ps) {
-                $stream->{$s}->{$p} = [ map { rdfjson2aref($_) } @{$stream->{$s}->{$p}} ]; 
+                my $predicate = $self->uri2aref($p,'_');
+               $stream->{$s}->{$predicate} = [
+                    map { $self->rdfjson2aref($_) } @{$stream->{$s}->{$p}} 
+                ]; 
+                delete $stream->{$s}->{$p} if $predicate ne $p;
             }
         }
         $aref = $stream;
@@ -92,18 +124,27 @@ __END__
 
 =head1 NAME
 
-Catmandu::Importer::RDF - retrieve RDF data
+Catmandu::Importer::RDF - parse RDF data
 
 =head1 VERSION
 
-version 0.15
+version 0.16
+
+=head1 SYNOPSIS
+
+  catmandu convert RDF --file rdfdump.ttl to YAML
+
+=head1 SYNOPSIS
+
+  catmandu convert RDF --url http://d-nb.info/1001703464 to YAML
 
 =head1 DESCRIPTION
 
-B<This module is experimental!>
-
 This L<Catmandu::Importer> can be use to import RDF data from URLs, files or
 input streams.  Importing from RDF stores or via SPARQL is not supported yet. 
+
+By default an RDF graph is imported as single item in aREF format (see
+L<RDF::aREF>).
 
 =head1 CONFIGURATION
 
@@ -113,11 +154,29 @@ input streams.  Importing from RDF stores or via SPARQL is not supported yet.
 
 =item fh
 
+=item encoding
+
+=item fix
+
+Default configuration options of L<Catmandu::Importer>. 
+
 =item url
+
+URL to retrieve RDF from.
 
 =item type
 
+RDF serialization type (e.g. C<ttl> for RDF/Turtle).
+
 =item base
+
+Base URL. By default derived from the URL or file name.
+
+=item ns
+
+Use default namespace prefixes as provided by L<RDF::NS> to abbreviate
+predicate and datatype URIs. Set to C<0> to disable abbreviating URIs.
+Set to a specific date to get stable namespace prefix mappings.
 
 =back
 
