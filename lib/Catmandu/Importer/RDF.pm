@@ -1,5 +1,4 @@
 package Catmandu::Importer::RDF;
-#ABSTRACT: parse RDF data
 #VERSION
 
 use namespace::clean;
@@ -113,9 +112,25 @@ sub _rdf_stream {
     return $model->as_stream;
 }
 
+1;
+__END__
+
+=head1 NAME
+
+Catmandu::Importer::RDF - parse RDF data
+
 =head1 SYNOPSIS
 
-  catmandu convert RDF --url http://d-nb.info/1001703464 to YAML
+Command line client C<catmandu>:
+
+    catmandu convert RDF --url http://d-nb.info/1001703464 to YAML
+    catmandu convert RDF --file rdfdump.ttl to JSON
+
+In Perl code:
+
+    use Catmandu::Importer::RDF;
+    my $url = "http://dx.doi.org/10.2474/trol.7.147";
+    my $rdf = Catmandu::Importer::RDF->new( url => $url )->first;
 
 =head1 DESCRIPTION
 
@@ -124,10 +139,6 @@ input streams.  Importing from RDF stores or via SPARQL is not supported yet.
 
 By default an RDF graph is imported as single item in aREF format (see
 L<RDF::aREF>).
-
-=head1 SYNOPSIS
-
-  catmandu convert RDF --file rdfdump.ttl to YAML
 
 =head1 CONFIGURATION
 
@@ -163,6 +174,10 @@ Set to a specific date to get stable namespace prefix mappings.
 
 =back
 
+=head1 METHODS
+
+See L<Catmandu::Importer>.
+
 =head1 SEE ALSO
 
 L<RDF::Trine::Store>, L<RDF::Trine::Parsers>
@@ -170,5 +185,3 @@ L<RDF::Trine::Store>, L<RDF::Trine::Parsers>
 =encoding utf8
 
 =cut
-
-1;
