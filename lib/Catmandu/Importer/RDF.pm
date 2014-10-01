@@ -1,5 +1,4 @@
 package Catmandu::Importer::RDF;
-#VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -8,6 +7,8 @@ use RDF::Trine::Parser;
 use RDF::Trine::Model;
 use RDF::aREF;
 use RDF::NS;
+
+our $VERSION = '0.16';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';

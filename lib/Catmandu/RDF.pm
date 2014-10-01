@@ -1,12 +1,12 @@
 package Catmandu::RDF;
-#ABSTRACT: Modules for handling RDF data within the Catmandu framework
-#VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
+
+our $VERSION = '0.16';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -32,6 +32,25 @@ has ns => (
     },
     handles => ['uri'],
 );
+
+1;
+__END__
+
+=encoding utf8
+
+=head1 NAME
+
+Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
+
+=begin markdown
+
+# STATUS
+
+[![Build Status](https://travis-ci.org/gbv/Catmandu-RDF.png)](https://travis-ci.org/gbv/Catmandu-RDF)
+[![Coverage Status](https://coveralls.io/repos/gbv/Catmandu-RDF/badge.png?branch=devel)](https://coveralls.io/r/gbv/Catmandu-RDF?branch=devel)
+[![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)](http://cpants.cpanauthors.org/dist/Catmandu-RDF)
+
+=end markdown
 
 =head1 DESCRIPTION
 
@@ -76,13 +95,16 @@ Export RDF with HTTP PATCH.
 
 =back
 
-=encoding utf8
-
 =head1 SEE ALSO
 
 This module is based on L<Catmandu>, L<RDF::aREF>, L<RDF::Trine>, and
 L<RDF::NS>.
 
-=cut
+=head1 COPYRIGHT AND LICENSE
 
-1;
+Copyright Jakob Voss, 2014-
+
+This is free software; you can redistribute it and/or modify it under the same
+terms as the Perl 5 programming language system itself.
+
+=cut

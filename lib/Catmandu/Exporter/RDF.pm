@@ -1,6 +1,4 @@
 package Catmandu::Exporter::RDF;
-#ABSTRACT: serialize RDF data
-#VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -8,6 +6,8 @@ use Moo;
 use RDF::Trine::Serializer;
 use RDF::Trine::Model;
 use RDF::aREF;
+
+our $VERSION = '0.16';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Exporter';
@@ -49,6 +49,10 @@ sub commit {
     $self->model->end_bulk_ops;
     $self->serializer->serialize_model_to_file( $self->fh, $self->model );
 }
+
+=head1 NAME
+
+Catmandu::Exporter::RDF - serialize RDF data
 
 =head1 SYNOPSIS
 

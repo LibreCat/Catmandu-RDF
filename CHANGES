@@ -1,0 +1,56 @@
+Changelog for Catmandu-RDF
+
+{{$NEXT}}
+  - Migrate to Dist::Milla
+
+0.16 2014-09-11T06:47:28
+ - No changes found
+
+0.15 2014-07-17T11:35:04
+ - document and test count method
+ - started importer
+
+0.14 2014-01-22T07:18:56
+ - internally use RDF::Trine::Model
+ - bug detected (issue #3?)
+ - use RDF::aREF 0.09
+
+0.13 2014-01-15T12:15:56
+ - Merge release
+ - use RDF::aREF 0.08
+
+0.12 2014-01-12T16:39:03
+ - release 0.12 with fixed dependencies
+ - update dependencies
+ - fixed dist.ini
+ - fixed dependency
+
+0.11 2013-12-02T14:17:01
+ - documentation
+ - fixed cpanfile
+ - don't test ob Perl 5.10
+ - split RDF::aREF as independent module
+
+0.10 2013-11-15T11:18:20
+ - started to support nested input documents
+ - renamed aRef to aREF
+
+0.09 2013-11-13T14:29:24
+ - migrated from RDF/JSON to aRef
+ - fix link
+
+0.03 2013-09-20T12:42:10
+ - auto-expand prefixed object-uris
+ - support 'a' as shortcut for 'rdf:type'
+ - extended documentation
+ - implemented basic Exporter
+ - support a subset of JSON-LD
+ - use dzil and travis
+
+0.02 2013-09-06T09:14:51
+ - documentation
+
+0.01 2013-09-05T09:39:00
+ - basic RDF Exporter
+ - first draft
+
