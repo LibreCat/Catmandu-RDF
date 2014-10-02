@@ -103,6 +103,8 @@ The option C<ns> can refer to an instance of or to a constructor argument of
 L<RDF::NS>. Use a fixed date, such as "C<20130816>" to make sure your URI
 namespace prefixes are stable.
 
+=back
+
 =head1 METHODS
 
 See also L<Catmandu::Exporter>.

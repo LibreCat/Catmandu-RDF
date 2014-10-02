@@ -37,7 +37,7 @@ check_add { type => 'ttl', ns => '20130816' }, {
 
 check_add { type => 'ttl', ns => '20130816' }, {
     _id => 'http://example.org/',
-    dct_extent => '42^xsd:integer',
+    dct_extent => '42^xsd_integer',
 } => "<http://example.org/> <http://purl.org/dc/terms/extent> 42 .\n",
     'literal object with datatype';
 
@@ -49,7 +49,7 @@ check_add { type => 'ttl', ns => '20130816' }, {
 
 check_add { type => 'ttl', ns => '20130816' }, {
     _id => 'http://example.org/',
-    a => 'foaf:Organization',
+    a => 'foaf_Organization',
 } => "<http://example.org/> a <http://xmlns.com/foaf/0.1/Organization> .\n",
     '"a" for rdf:type';
 

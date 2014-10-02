@@ -6,6 +6,7 @@ use Moo;
 use RDF::Trine::Parser;
 use RDF::Trine::Model;
 use RDF::aREF;
+use RDF::aREF::Encoder;
 use RDF::NS;
 
 our $VERSION = '0.16';
@@ -17,14 +18,6 @@ has url => (
     is => 'ro'
 );
 
-has 'sn' => (
-    is => 'ro',
-    lazy    => 1, 
-    builder => sub {
-        $_[0]->ns ? $_[0]->ns->REVERSE : undef
-    }
-);
-
 has base => (
     is      => 'ro', 
     lazy    => 1, 
@@ -33,40 +26,13 @@ has base => (
     }
 );
 
-# TODO: move to RDF::aREF
-sub uri2aref {
-    my ($self, $uri, $sep) = @_;
-
-    return 'a' if $uri eq 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
-
-    if ($self->sn) {
-        my @qname = $self->sn->qname($uri);
-        return join($sep,@qname) if @qname;
+has encoder => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => sub {
+        RDF::aREF::Encoder->new( ns => $_[0]->ns );
     }
-
-    return $uri;
-}
-# TODO: move to RDF::aREF
-sub rdfjson2aref {
-    my ($self, $object) = @_;
-    if ($object->{type} eq 'literal') {
-        my $value = $object->{value};
-        if ($object->{lang}) {
-            return $value.'@'.$object->{lang};
-        } elsif ($object->{datatype}) {
-            my $dt = $self->uri2aref($object->{datatype},':');
-            $dt = "<$dt>" if $dt eq $object->{datatype};
-            return "$value^$dt";
-        } else {
-            return "$value@";
-        }
-    } elsif ($object->{type} eq 'bnode') {
-        return $object->{value};
-    } else {
-        my $obj = $self->uri2aref($object->{value},':');
-        return ($obj eq $object->{value} ? "<$obj>" : $obj);
-    }
-}
+);
 
 sub generator {
     my ($self) =@_;
@@ -80,9 +46,9 @@ sub generator {
         # TODO: include namespace mappings if requested
         while (my ($s,$ps) = each %$stream) {
             foreach my $p (keys %$ps) {
-                my $predicate = $self->uri2aref($p,'_');
+                my $predicate = $self->encoder->predicate($p);
                $stream->{$s}->{$predicate} = [
-                    map { $self->rdfjson2aref($_) } @{$stream->{$s}->{$p}} 
+                    map { $self->encoder->object($_) } @{$stream->{$s}->{$p}} 
                 ]; 
                 delete $stream->{$s}->{$p} if $predicate ne $p;
             }
