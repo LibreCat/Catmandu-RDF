@@ -10,7 +10,7 @@ my $exporter = Catmandu::Exporter::RDF->new(file => \$turtle, type => 'ttl');
 my @arefs = (
     {
         "http://x.org/alice" => { "foaf_knows" => "<http://x.org/bob>" },
-        "http://x.org/bob" => { "a" => "foaf:Person", }
+        "http://x.org/bob" => { "a" => "foaf_Person", }
     },
     { 
         "http://x.org/alice" => { "foaf_knows" => "<http://x.org/claire>" }, 

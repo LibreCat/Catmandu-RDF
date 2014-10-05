@@ -1,53 +1,57 @@
 Changelog for Catmandu-RDF
 
-0.16 2014-09-10T10:20:56
- - improve RDF importer (Jakob Voss)
+0.17  2014-10-02 14:26:35 CEST
+  - Migrate to Dist::Milla
+  - Adjust to aREF 0.19
+
+0.16 2014-09-11T06:47:28
+ - No changes foun
 
 0.15 2014-07-17T11:35:04
- - document and test count method (Jakob Voss)
- - started importer (Jakob Voss)
+ - document and test count method
+ - started importer
 
 0.14 2014-01-22T07:18:56
- - internally use RDF::Trine::Model (Jakob Voss)
- - bug detected (issue #3?) (Jakob Voss)
- - use RDF::aREF 0.09 (Jakob Voss)
+ - internally use RDF::Trine::Model
+ - bug detected (issue #3?)
+ - use RDF::aREF 0.09
 
 0.13 2014-01-15T12:15:56
- - Merge release (Jakob Voss)
- - use RDF::aREF 0.08 (Jakob Voss)
+ - Merge release
+ - use RDF::aREF 0.08
 
 0.12 2014-01-12T16:39:03
- - release 0.12 with fixed dependencies (Jakob Voss)
- - update dependencies (Jakob Voss)
- - fixed dist.ini (Jakob Voss)
- - fixed dependency (Jakob Voss)
+ - release 0.12 with fixed dependencies
+ - update dependencies
+ - fixed dist.ini
+ - fixed dependency
 
 0.11 2013-12-02T14:17:01
- - documentation (Jakob Voss)
- - fixed cpanfile (Jakob Voss)
- - don't test ob Perl 5.10 (Jakob Voss)
- - split RDF::aREF as independent module (Jakob Voss)
+ - documentation
+ - fixed cpanfile
+ - don't test ob Perl 5.10
+ - split RDF::aREF as independent module
 
 0.10 2013-11-15T11:18:20
- - started to support nested input documents (Jakob Voss)
- - renamed aRef to aREF (Jakob Voss)
+ - started to support nested input documents
+ - renamed aRef to aREF
 
 0.09 2013-11-13T14:29:24
- - migrated from RDF/JSON to aRef (Jakob Voss)
- - fix link (Jakob Voss)
+ - migrated from RDF/JSON to aRef
+ - fix link
 
 0.03 2013-09-20T12:42:10
- - auto-expand prefixed object-uris (Jakob Voss)
- - support 'a' as shortcut for 'rdf:type' (Jakob Voss)
- - extended documentation (Jakob Voss)
- - implemented basic Exporter (Jakob Voss)
- - support a subset of JSON-LD (Jakob Voss)
- - use dzil and travis (Jakob Voss)
+ - auto-expand prefixed object-uris
+ - support 'a' as shortcut for 'rdf:type'
+ - extended documentation
+ - implemented basic Exporter
+ - support a subset of JSON-LD
+ - use dzil and travis
 
 0.02 2013-09-06T09:14:51
- - documentation (Jakob Voss)
+ - documentation
 
 0.01 2013-09-05T09:39:00
- - basic RDF Exporter (Jakob Voss)
- - first draft (Jakob Voss)
+ - basic RDF Exporter
+ - first draft
 
