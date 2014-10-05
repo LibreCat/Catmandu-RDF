@@ -1,3 +1,11 @@
+libcatmandu-rdf-perl (0.17-1) UNRELEASED; urgency=medium
+
+  * Update copyright_hints file, due to change in upstream code layout.
+  * Use perl-build.mk instead of perl-makemaker.mk, upstream switched
+    build systems. This result in tighter build-depends on cdbs 0.4.122~
+
+ -- Vasudev Kamath <kamathvasudev@gmail.com>  Sun, 05 Oct 2014 16:11:09 +0530
+
 libcatmandu-rdf-perl (0.16-1) unstable; urgency=medium
 
   [ upstream ]
