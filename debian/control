@@ -1,9 +1,10 @@
 Source: libcatmandu-rdf-perl
 Section: perl
 Priority: optional
-Build-Depends: cdbs,
+Build-Depends: cdbs (>= 0.4.122~),
  devscripts,
  perl,
+ libmodule-build-tiny-perl,
  debhelper,
  dh-buildinfo,
  libcatmandu-perl,
