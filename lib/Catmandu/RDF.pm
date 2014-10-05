@@ -1,12 +1,12 @@
 package Catmandu::RDF;
-#ABSTRACT: Modules for handling RDF data within the Catmandu framework
-our $VERSION = '0.16'; #VERSION
 
 use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
+
+our $VERSION = '0.17';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -33,22 +33,24 @@ has ns => (
     handles => ['uri'],
 );
 
-
 1;
-
 __END__
 
-=pod
-
-=encoding UTF-8
+=encoding utf8
 
 =head1 NAME
 
 Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
 
-=head1 VERSION
+=begin markdown
 
-version 0.16
+# STATUS
+
+[![Build Status](https://travis-ci.org/gbv/Catmandu-RDF.png)](https://travis-ci.org/gbv/Catmandu-RDF)
+[![Coverage Status](https://coveralls.io/repos/gbv/Catmandu-RDF/badge.png?branch=devel)](https://coveralls.io/r/gbv/Catmandu-RDF?branch=devel)
+[![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)](http://cpants.cpanauthors.org/dist/Catmandu-RDF)
+
+=end markdown
 
 =head1 DESCRIPTION
 
@@ -98,15 +100,11 @@ Export RDF with HTTP PATCH.
 This module is based on L<Catmandu>, L<RDF::aREF>, L<RDF::Trine>, and
 L<RDF::NS>.
 
-=head1 AUTHOR
-
-Jakob Voß
-
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Jakob Voß.
+Copyright Jakob Voss, 2014-
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under the same
+terms as the Perl 5 programming language system itself.
 
 =cut

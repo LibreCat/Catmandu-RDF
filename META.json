@@ -1,0 +1,64 @@
+{
+   "abstract" : "Modules for handling RDF data within the Catmandu framework",
+   "author" : [
+      "Jakob Voß"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Milla version v1.0.8, Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.141520",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Catmandu-RDF",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build::Tiny" : "0.037"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Dist::Milla" : "v1.0.8",
+            "Test::Pod" : "1.41"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Catmandu" : "0.9",
+            "RDF::NS" : "20140910",
+            "RDF::Trine" : "1.0",
+            "RDF::aREF" : "0.14"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/gbv/Catmandu-RDF/issues"
+      },
+      "homepage" : "https://github.com/gbv/Catmandu-RDF",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/gbv/Catmandu-RDF.git",
+         "web" : "https://github.com/gbv/Catmandu-RDF"
+      }
+   },
+   "version" : "0.17",
+   "x_contributors" : [
+      "Jakob Voss <voss@gbv.de>"
+   ]
+}
+
