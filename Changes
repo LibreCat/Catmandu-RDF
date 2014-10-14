@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - add field _url on import from url (issue #9)
+  - started fix function aref_query
 
 0.17  2014-10-02 14:26:35 CEST
   - Migrate to Dist::Milla
