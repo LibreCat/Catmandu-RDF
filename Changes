@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.18  2014-10-14 12:53:01 CEST
   - add field _url on import from url (issue #9)
   - started fix function aref_query
 
