@@ -1,10 +1,22 @@
-libcatmandu-rdf-perl (0.17-1) UNRELEASED; urgency=medium
+libcatmandu-rdf-perl (0.18-1) unstable; urgency=medium
 
-  * Update copyright_hints file, due to change in upstream code layout.
-  * Use perl-build.mk instead of perl-makemaker.mk, upstream switched
-    build systems. This result in tighter build-depends on cdbs 0.4.122~
+  [ upstream ]
+  * New release(s):
+    + Migrate packaging to Dist::Milla.
+    + Adjust to conform to aREF 0.19.
+    + Add field _url on import from url.
+    + Begin to fix function aref_query.
 
- -- Vasudev Kamath <kamathvasudev@gmail.com>  Sun, 05 Oct 2014 16:11:09 +0530
+  [ Vasudev Kamath ]
+  * Adapt to upstream change of build system:
+    + Include perl-build.mk (not perl-makemaker.mk).
+    + Tighten build-dependency on cdbs.
+
+  [ Jonas Smedegaard ]
+  * Declare compliance with Debian Policy 3.9.6.
+  * Tighten to (build-)depend versioned on librdf-aref-perl.
+
+ -- Jonas Smedegaard <dr@jones.dk>  Wed, 15 Oct 2014 11:41:45 +0200
 
 libcatmandu-rdf-perl (0.16-1) unstable; urgency=medium
 

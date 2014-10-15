@@ -9,12 +9,12 @@ Build-Depends: cdbs (>= 0.4.122~),
  dh-buildinfo,
  libcatmandu-perl,
  librdf-trine-perl,
- librdf-aref-perl,
- librdf-ns-perl (>= 20140910)
+ librdf-ns-perl (>= 20140910),
+ librdf-aref-perl (>= 0.18)
 Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
 Uploaders: Jonas Smedegaard <dr@jones.dk>,
  Vasudev Kamath <kamathvasudev@gmail.com>
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Vcs-Git: git://anonscm.debian.org/pkg-perl/packages/libcatmandu-rdf-perl
 Vcs-Browser: https://anonscm.debian.org/cgit/pkg-perl/packages/libcatmandu-rdf-perl.git
 Homepage: https://github.com/gbv/Catmandu-RDF
