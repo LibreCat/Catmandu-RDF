@@ -24,11 +24,11 @@ requires:
   Catmandu: '0.9'
   RDF::NS: '20140910'
   RDF::Trine: '1.0'
-  RDF::aREF: '0.14'
+  RDF::aREF: '0.18'
 resources:
   bugtracker: https://github.com/gbv/Catmandu-RDF/issues
   homepage: https://github.com/gbv/Catmandu-RDF
   repository: https://github.com/gbv/Catmandu-RDF.git
-version: '0.17'
+version: '0.18'
 x_contributors:
   - 'Jakob Voss <voss@gbv.de>'

@@ -54,6 +54,11 @@ sub generator {
             }
         }
         $aref = $stream;
+
+        if ($self->url) {
+            $aref->{_url} = $self->url;
+        }
+
         $stream = undef;
 
         return $aref;

@@ -9,12 +9,14 @@ README
 cpanfile
 dist.ini
 lib/Catmandu/Exporter/RDF.pm
+lib/Catmandu/Fix/aref_query.pm
 lib/Catmandu/Importer/RDF.pm
 lib/Catmandu/RDF.pm
 t/example.rdf
 t/example.ttl
 t/exporter-add.t
 t/exporter.t
+t/fix-aref-query.t
 t/importer.t
 t/issue-3.t
 t/release-pod-syntax.t
