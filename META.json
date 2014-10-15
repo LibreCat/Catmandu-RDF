@@ -26,7 +26,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.037"
+            "Module::Build::Tiny" : "0.039"
          }
       },
       "develop" : {
@@ -47,13 +47,13 @@
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/gbv/Catmandu-RDF/issues"
+         "web" : "https://github.com/LibreCat/Catmandu-RDF/issues"
       },
-      "homepage" : "https://github.com/gbv/Catmandu-RDF",
+      "homepage" : "https://github.com/LibreCat/Catmandu-RDF",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/gbv/Catmandu-RDF.git",
-         "web" : "https://github.com/gbv/Catmandu-RDF"
+         "url" : "https://github.com/LibreCat/Catmandu-RDF.git",
+         "web" : "https://github.com/LibreCat/Catmandu-RDF"
       }
    },
    "version" : "0.18",

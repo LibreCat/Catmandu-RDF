@@ -4,44 +4,30 @@ Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
 
 # STATUS
 
-[![Build Status](https://travis-ci.org/gbv/Catmandu-RDF.png)](https://travis-ci.org/gbv/Catmandu-RDF)
-[![Coverage Status](https://coveralls.io/repos/gbv/Catmandu-RDF/badge.png?branch=devel)](https://coveralls.io/r/gbv/Catmandu-RDF?branch=devel)
+[![Build Status](https://travis-ci.org/LibreCat/Catmandu-RDF.png)](https://travis-ci.org/LibreCat/Catmandu-RDF)
+[![Coverage Status](https://coveralls.io/repos/LibreCat/Catmandu-RDF/badge.png)](https://coveralls.io/r/LibreCat/Catmandu-RDF)
 [![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)](http://cpants.cpanauthors.org/dist/Catmandu-RDF)
 
 # DESCRIPTION
 
 Catmandu::RDF contains modules for handling RDF data within the [Catmandu](https://metacpan.org/pod/Catmandu)
-framework. This release is in an early state of development. Feedback and
-contributions are very welcome at [https://github.com/nichtich/Catmandu-RDF](https://github.com/nichtich/Catmandu-RDF)!
+framework. RDF data is encoded/decoded in [aREF](http://gbv.github.io/aREF/) as
+implemented with [RDF::aREF](https://metacpan.org/pod/RDF::aREF). Please keep in mind that RDF is a graph-based
+data structuring format with specialized technologies such as SPARQL and triple
+stores.  Using Catmandu::RDF to transform RDF to RDF (e.g. conversion from one
+RDF serialization to another) is possible but probably less performant than
+decent RDF tools. Catmandu::RDF, however, is more conventient to convert
+between RDF and  other data formats.
 
 # AVAILABLE MODULES
 
 - [Catmandu::Exporter::RDF](https://metacpan.org/pod/Catmandu::Exporter::RDF)
 
     Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...).
-    RDF data must be provided in **another RDF Encoding Form (aREF)** as 
-    implemented with [RDF::aREF](https://metacpan.org/pod/RDF::aREF).
 
 - [Catmandu::Importer::RDF](https://metacpan.org/pod/Catmandu::Importer::RDF)
 
     Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...).
-
-# SUGGESTED MODULES
-
-The following modules have not been implemented yet. Please contribute or
-comment if you miss them!
-
-- `Catmandu::Importer::SPARQL`
-
-    Import RDF data from a SPARQL endpoint.
-
-- `Catmandu::Exporter::SPARUL` or `Catmandu::Exporter::SPARQL`
-
-    Export RDF data with SPARQL/Update.
-
-- `Catmandu::Exporter::RDFPatch`
-
-    Export RDF with HTTP PATCH.
 
 # SEE ALSO
 
