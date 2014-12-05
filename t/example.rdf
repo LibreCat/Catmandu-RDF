@@ -4,10 +4,10 @@
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://example.org">
-    <ns0:foo xmlns:ns0="http://example.org/" xml:lang="en">bar</ns0:foo>
+    <ns0:foo xmlns:ns0="http://example.org/" xml:lang="en">bär</ns0:foo>
   </rdf:Description>
   <rdf:Description rdf:about="http://example.org">
-    <ns0:title xmlns:ns0="http://purl.org/dc/elements/1.1/">BAR</ns0:title>
+    <ns0:title xmlns:ns0="http://purl.org/dc/elements/1.1/">BÄR</ns0:title>
   </rdf:Description>
   <rdf:Description rdf:about="http://example.org">
     <ns0:extent xmlns:ns0="http://purl.org/dc/elements/1.1/" rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">42</ns0:extent>

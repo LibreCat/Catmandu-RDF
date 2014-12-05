@@ -6,7 +6,7 @@ use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -16,7 +16,7 @@ our %TYPE_ALIAS = (
     Json => 'RDFJSON',
 );
 
-# todo use 'file' to guess type
+# TODO: use 'file' to guess type
 has type => (
     is => 'ro', 
     coerce => sub { my $t = ucfirst($_[0]); $TYPE_ALIAS{$t} // $t },
@@ -27,7 +27,7 @@ has ns => (
     default => sub { RDF::NS->new },
     coerce => sub {
         return $_[0] if is_instance($_[0],'RDF::NS');
-        return if !$_[0];
+        return $_[0] if !$_[0];
         return RDF::NS->new($_[0]);
     },
     handles => ['uri'],

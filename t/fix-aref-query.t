@@ -18,7 +18,7 @@ delete $rdf->{ $rdf->{_uri} };
 
 is_deeply $rdf, {
     '_uri' => 'http://example.org',
-    title => 'BAR'
+    title => "B\x{c4}R"
 }, 'simple RDF fix';
 
 done_testing;

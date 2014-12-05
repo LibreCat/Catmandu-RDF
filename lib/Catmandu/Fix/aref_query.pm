@@ -4,6 +4,8 @@ use Catmandu::Sane;
 use Moo;
 use RDF::aREF::Query;
 
+our $VERSION = '0.19';
+
 has query => (
     is => 'ro',
     coerce => sub { 
