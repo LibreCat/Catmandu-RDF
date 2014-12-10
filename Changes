@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.20  2014-12-10 15:13:40 CET
   - tried to fix import from URL encoding (issue #9)
 
 0.19  2014-12-10 14:17:59 CET
