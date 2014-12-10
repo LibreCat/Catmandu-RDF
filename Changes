@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.19  2014-12-10 14:17:59 CET
   - add triples importer mode (issue #5)
   - disable namespaces with ns=0 (issue #8) 
   - support importing from string reference
