@@ -35,6 +35,10 @@ has encoder => (
     }
 );
 
+has triples => (
+    is      => 'ro',
+);
+
 sub generator {
     my ($self) =@_;
     sub {
@@ -42,27 +46,44 @@ sub generator {
         return unless $stream;
 
         my $aref;
-        $stream = $stream->as_hashref;
-        # TODO if size = 1 use _id => $key
-        # TODO: include namespace mappings if requested
-        while (my ($s,$ps) = each %$stream) {
-            foreach my $p (keys %$ps) {
-                my $predicate = $self->encoder->predicate($p);
-               $stream->{$s}->{$predicate} = [
-                    map { $self->encoder->object($_) } @{$stream->{$s}->{$p}} 
-                ]; 
-                delete $stream->{$s}->{$p} if $predicate ne $p;
+
+        if ($self->triples) {
+            if (my $triple = $stream->next) {
+                # TODO: move to RDF::aREF
+                my $subject = $triple->subject->is_resource 
+                            ? $triple->subject->uri_value 
+                            : $triple->subject->sse; # blank
+                return {
+                    _id => $triple->subject->uri_value,
+                    $self->encoder->predicate($triple->predicate->uri_value),
+                    $self->encoder->object($triple->object)
+                };
+            } else {
+                return ($stream = undef);
             }
+        } else {
+
+            $stream = $stream->as_hashref;
+            # TODO if size = 1 use _id => $key
+            # TODO: include namespace mappings if requested
+            while (my ($s,$ps) = each %$stream) {
+                foreach my $p (keys %$ps) {
+                    my $predicate = $self->encoder->predicate($p);
+                   $stream->{$s}->{$predicate} = [
+                        map { $self->encoder->object($_) } @{$stream->{$s}->{$p}} 
+                    ]; 
+                    delete $stream->{$s}->{$p} if $predicate ne $p;
+                }
+            }
+            $aref = $stream;
+            $stream = undef;
+
+            if ($self->url) {
+                $aref->{_url} = $self->url;
+            }
+
+            return $aref;
         }
-        $aref = $stream;
-
-        if ($self->url) {
-            $aref->{_url} = $self->url;
-        }
-
-        $stream = undef;
-
-        return $aref;
     };
 }
 
@@ -149,6 +170,10 @@ Base URL. By default derived from the URL or file name.
 Use default namespace prefixes as provided by L<RDF::NS> to abbreviate
 predicate and datatype URIs. Set to C<0> to disable abbreviating URIs.
 Set to a specific date to get stable namespace prefix mappings.
+
+=item triples
+
+Import each RDF triple as one aREF predicate map, if enabled.
 
 =back
 
