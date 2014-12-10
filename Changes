@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - tried to fix import from URL encoding (issue #9)
 
 0.19  2014-12-10 14:17:59 CET
   - add triples importer mode (issue #5)

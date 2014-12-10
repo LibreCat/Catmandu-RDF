@@ -9,7 +9,7 @@ use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
@@ -80,11 +80,27 @@ sub generator {
 
             if ($self->url) {
                 $aref->{_url} = $self->url;
+                # RDF::Trine::Parser parses data from URL to UTF-8
+                # but we want internal character sequences
+                _utf8_decode($aref);
             }
 
             return $aref;
         }
     };
+}
+
+sub _utf8_decode {
+    if (ref $_[0] eq 'HASH') {
+        # FIXME: UTF-8 in property values
+        foreach (values %{$_[0]}) {
+            ref($_) ? _utf8_decode($_) : utf8::decode($_);
+        }
+    } else {
+        foreach (@{$_[0]}) {
+            ref($_) ? _utf8_decode($_) : utf8::decode($_);
+        }
+    }
 }
 
 sub _rdf_stream {

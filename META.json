@@ -56,7 +56,7 @@
          "web" : "https://github.com/LibreCat/Catmandu-RDF"
       }
    },
-   "version" : "0.19",
+   "version" : "0.20",
    "x_contributors" : [
       "Jakob Voss <voss@gbv.de>"
    ]
