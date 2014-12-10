@@ -9,6 +9,10 @@ install:
     - cpanm --quiet --notest --skip-satisfied Dist::Milla
     - cpanm --installdeps .
 
+# fix https://github.com/miyagawa/cpanminus/issues/412    
+before_install:
+    - cpanm -nq Pod::Readme
+
 # full release test
 script:
     - milla smoke --release --author
