@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.22  2014-12-11 15:01:15 CET
   - align with RDF::aREF 0.22, new options predicate_map
 
 0.20  2014-12-10 15:13:40 CET
