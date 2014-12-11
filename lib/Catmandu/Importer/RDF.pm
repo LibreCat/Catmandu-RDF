@@ -9,7 +9,7 @@ use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
 
-our $VERSION = '0.20';
+our $VERSION = '0.22';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
@@ -31,8 +31,15 @@ has encoder => (
     lazy    => 1,
     builder => sub {
         my $ns = $_[0]->ns;
-        RDF::aREF::Encoder->new( ns => (($ns // 1) ? $ns : { }) );
+        RDF::aREF::Encoder->new( 
+            ns => (($ns // 1) ? $ns : { }),
+            subject_map => !$_[0]->predicate_map,
+        );
     }
+);
+
+has predicate_map => (
+    is      => 'ro',
 );
 
 has triples => (
@@ -45,48 +52,35 @@ sub generator {
         state $stream = $self->_rdf_stream;
         return unless $stream;
 
-        my $aref;
-
+        my $aref = { };
         if ($self->triples) {
             if (my $triple = $stream->next) {
-                # TODO: move to RDF::aREF
-                my $subject = $triple->subject->is_resource 
-                            ? $triple->subject->uri_value 
-                            : $triple->subject->sse; # blank
-                return {
-                    _id => $triple->subject->uri_value,
-                    $self->encoder->predicate($triple->predicate->uri_value),
-                    $self->encoder->object($triple->object)
-                };
+                $aref = $self->encoder->triple(
+                        $triple->subject,
+                        $triple->predicate,
+                        $triple->object
+                );
             } else {
                 return ($stream = undef);
             }
         } else {
-
-            $stream = $stream->as_hashref;
-            # TODO if size = 1 use _id => $key
             # TODO: include namespace mappings if requested
-            while (my ($s,$ps) = each %$stream) {
-                foreach my $p (keys %$ps) {
-                    my $predicate = $self->encoder->predicate($p);
-                   $stream->{$s}->{$predicate} = [
-                        map { $self->encoder->object($_) } @{$stream->{$s}->{$p}} 
-                    ]; 
-                    delete $stream->{$s}->{$p} if $predicate ne $p;
-                }
-            }
-            $aref = $stream;
-            $stream = undef;
+            $self->encoder->add_hashref( $stream->as_hashref, $aref );
 
             if ($self->url) {
                 $aref->{_url} = $self->url;
-                # RDF::Trine::Parser parses data from URL to UTF-8
-                # but we want internal character sequences
-                _utf8_decode($aref);
             }
 
-            return $aref;
+            $stream = undef;
         }
+
+        if ($self->url) {
+            # RDF::Trine::Parser parses data from URL to UTF-8
+            # but we want internal character sequences
+            _utf8_decode($aref);
+        }
+
+        return $aref;
     };
 }
 
@@ -159,16 +153,6 @@ L<RDF::aREF>).
 
 =over
 
-=item file
-
-=item fh
-
-=item encoding
-
-=item fix
-
-Default configuration options of L<Catmandu::Importer>. 
-
 =item url
 
 URL to retrieve RDF from.
@@ -189,7 +173,22 @@ Set to a specific date to get stable namespace prefix mappings.
 
 =item triples
 
-Import each RDF triple as one aREF predicate map, if enabled.
+Import each RDF triple as one aREF subject map (default) or predicate map
+(option C<predicate_map>), if enabled.
+
+=item predicate_map
+
+Import RDF as aREF predicate map, if possible.
+
+=item file
+
+=item fh
+
+=item encoding
+
+=item fix
+
+Default configuration options of L<Catmandu::Importer>. 
 
 =back
 
