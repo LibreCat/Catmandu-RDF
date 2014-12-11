@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - fix bnode mapping bug
   - simplify calling syntax of aref_query fix
 
 0.22  2014-12-11 15:01:15 CET

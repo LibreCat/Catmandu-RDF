@@ -7,7 +7,7 @@ use RDF::Trine::Serializer;
 use RDF::Trine::Model;
 use RDF::aREF;
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Exporter';
@@ -41,12 +41,13 @@ has model => (
 
 sub add {
     my ($self, $aref) = @_;
-    $self->decoder->decode($aref);
+    $self->decoder->decode($aref, keep_bnode_map => 1);
 }
 
 sub commit {
     my ($self) = @_;
     $self->model->end_bulk_ops;
+    $self->decoder->clean_bnodes;
     $self->serializer->serialize_model_to_file( $self->fh, $self->model );
 }
 

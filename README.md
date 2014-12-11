@@ -29,6 +29,10 @@ between RDF and  other data formats.
 
     Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...).
 
+- [Catmandu::Fix::aref\_query](https://metacpan.org/pod/Catmandu::Fix::aref_query)
+
+    Copy values of RDF data in aREF format to a new field.
+
 # SEE ALSO
 
 This module is based on [Catmandu](https://metacpan.org/pod/Catmandu), [RDF::aREF](https://metacpan.org/pod/RDF::aREF), [RDF::Trine](https://metacpan.org/pod/RDF::Trine), and

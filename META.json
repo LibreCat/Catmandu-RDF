@@ -40,7 +40,7 @@
             "Catmandu" : "0.9",
             "RDF::NS" : "20140910",
             "RDF::Trine" : "1.0",
-            "RDF::aREF" : "0.22"
+            "RDF::aREF" : "0.23"
          }
       }
    },
@@ -56,7 +56,7 @@
          "web" : "https://github.com/LibreCat/Catmandu-RDF"
       }
    },
-   "version" : "0.22",
+   "version" : "0.23",
    "x_contributors" : [
       "Jakob Voss <voss@gbv.de>"
    ]
