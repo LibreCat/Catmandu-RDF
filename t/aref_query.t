@@ -20,7 +20,18 @@ is_deeply $rdf, {
 }, 'simple RDF fix';
 
 $rdf = importer('RDF', file => 't/example.ttl')->first;
-Catmandu::Fix::aref_query->new('http://example.org','dc_title','label')->fix($rdf);
-is $rdf->{label}, "B\x{c4}R";
+
+sub fix {
+    my $rdf = shift;
+    Catmandu::Fix::aref_query->new(@_)->fix($rdf);
+    delete $rdf->{@_[-1]};
+}
+
+is fix($rdf,'http://example.org','dc_title','label'), "B\x{c4}R";
+is fix($rdf,'dc_title','label'), undef;
+
+$rdf->{_url} = 'http://example.org';
+is fix($rdf,'dc_title','label'), "B\x{c4}R", 'respect _url field';
+is fix($rdf,'http://example.com','dc_title','label'), undef;
 
 done_testing;
