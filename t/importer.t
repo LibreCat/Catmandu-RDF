@@ -66,9 +66,20 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 SELECT * WHERE { ?book dc:title ?title . }
 END
     my $importer = importer('RDF', url => 'http://sparql.org/books/sparql' , sparql => $sparql);
+    ok $importer , 'got a SPARQL importer';
+
     my $ref = $importer->first;
     ok $ref->{title} , 'got a title';
     ok $ref->{book} , 'got a book';
+}
+
+{
+    my $url = 'http://fragments.dbpedia.org/2014/en?subject=http://dbpedia.org/resource/Arthur_Schopenhauer';
+    my $importer = importer('RDF', url => $url , ldf => 1);
+    ok $importer , 'got a LDF importer';
+
+    my $ref = $importer->first;
+    ok $ref->{'http://dbpedia.org/resource/Arthur_Schopenhauer'} , 'got information about Arthur';
 }
 
 done_testing;

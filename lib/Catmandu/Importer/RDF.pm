@@ -9,6 +9,7 @@ use RDF::Trine::Store::SPARQL;
 use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
+use Catmandu::RDF::Fragments;
 use Data::Dumper;
 
 our $VERSION = '0.22';
@@ -44,6 +45,10 @@ has sparql => (
     is      => 'ro',
 );
 
+has ldf => (
+    is      => 'ro',
+);
+
 has predicate_map => (
     is      => 'ro',
 );
@@ -55,7 +60,10 @@ has triples => (
 sub generator {
     my ($self) = @_;
 
-    if ($self->sparql) {
+    if ($self->ldf) {
+        return $self->ldf_generator;
+    }
+    elsif ($self->sparql) {
         return $self->sparql_generator;
     }
     else {
@@ -63,11 +71,61 @@ sub generator {
     }
 }
 
+sub ldf_generator {
+    my ($self) = @_;
+
+    my $ldf = Catmandu::RDF::Fragments->new( url => $self->url );
+
+    sub {
+        state $iterator = $ldf->get_statements;
+
+        return undef unless $iterator; 
+
+        state $stream = $iterator->generator->();
+
+        return undef unless $stream;
+
+        my $aref = {};
+
+        if ($self->triples) {
+            # Create a stream from the current model...
+            state $rdf_stream = $stream->as_stream;
+
+            # Keep reading triples from the current stream...
+            if (my $triple = $rdf_stream->next) {
+                $aref = $self->encoder->triple(
+                            $triple->subject,
+                            $triple->predicate,
+                            $triple->object
+                );
+            } else {
+                return ($stream = undef);
+            }
+
+            # Until the stream is empty and we need to fill a new stream
+            unless ($rdf_stream->peek) {
+                $stream = $iterator->generator->();
+                $rdf_stream = $stream->as_stream if defined $stream;
+            }
+        }
+        else {
+            $self->encoder->add_hashref( $stream->as_hashref, $aref );
+
+            if ($self->url) {
+                $aref->{_url} = $self->url;
+            }
+
+            $stream = $iterator->generator->();
+        }
+
+        return $aref;
+    };
+}
+
 sub sparql_generator {
     my ($self) = @_;
 
     warn "--triples not active for sparql queries" if ($self->triples);
-    warn "--predicate_map not active for sparql queries" if ($self->predicate_map);
 
     sub {
         state $stream = $self->_sparql_stream;
@@ -204,7 +262,16 @@ Command line client C<catmandu>:
 
     catmandu convert RDF --file rdfdump.ttl to JSON
 
-    catmandu convert RDF --url http://dbpedia.org/sparql --sparql "SELECT ?film WHERE { ?film <http://purl.org/dc/terms/subject> <http://dbpedia.org/resource/Category:French_films> }"
+    # Support for SPARQL
+    catmandu convert RDF \
+      --url http://dbpedia.org/sparql \
+      --sparql "SELECT ?film WHERE { ?film <http://purl.org/dc/terms/subject> <http://dbpedia.org/resource/Category:French_films> }"
+
+    # Support for Linked Data Fragments
+    catmandu convert RDF \
+      --url http://fragments.dbpedia.org/2014/en \
+      --ldf 1
+
 
 In Perl code:
 
@@ -265,6 +332,10 @@ Default configuration options of L<Catmandu::Importer>.
 
 The SPARQL query to be executed on the URL endpoint (currectly only SELECT is supported)
 
+=item ldf
+
+The endpoint at the endpoint is a Linked Data fragment server (See: http://linkeddatafragments.org/)
+
 =back
 
 =head1 METHODS
@@ -273,7 +344,7 @@ See L<Catmandu::Importer>.
 
 =head1 SEE ALSO
 
-L<RDF::Trine::Store>, L<RDF::Trine::Parser>
+L<RDF::Trine::Store>, L<RDF::Trine::Parser> , L<Catmandu::RDF::Fragments>
 
 =encoding utf8
 

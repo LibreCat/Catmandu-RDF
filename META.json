@@ -57,7 +57,8 @@
    },
    "version" : "0.23",
    "x_contributors" : [
-      "Jakob Voss <voss@gbv.de>"
+      "Jakob Voss <voss@gbv.de>",
+      "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>"
    ]
 }
 
