@@ -81,7 +81,7 @@ sub ldf_generator {
 
         return undef unless $iterator; 
 
-        state $stream = $iterator->generator->();
+        state $stream = $iterator->();
 
         return undef unless $stream;
 
@@ -104,7 +104,7 @@ sub ldf_generator {
 
             # Until the stream is empty and we need to fill a new stream
             unless ($rdf_stream->peek) {
-                $stream = $iterator->generator->();
+                $stream = $iterator->();
                 $rdf_stream = $stream->as_stream if defined $stream;
             }
         }
@@ -115,7 +115,7 @@ sub ldf_generator {
                 $aref->{_url} = $self->url;
             }
 
-            $stream = $iterator->generator->();
+            $stream = $iterator->();
         }
 
         return $aref;

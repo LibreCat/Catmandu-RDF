@@ -8,22 +8,28 @@ my $pkg;
 BEGIN { use_ok $pkg = 'Catmandu::RDF::Fragments'; }
 require_ok $pkg;
 
-my $frag1 = $pkg->new(url => 'http://fragments.dbpedia.org/2014/en');
+SKIP: {
+  skip "networking requires ALLOW_NETWORKING set", 1
+    unless $ENV{'ALLOW_NETWORKING'};
 
-ok $frag1->is_fragment_server , 'http://fragments.dbpedia.org/2014/en is a LDFserver';
+    my $frag1 = $pkg->new(url => 'http://fragments.dbpedia.org/2014/en');
 
-my $pattern = $frag1->pattern;
+    ok $frag1->is_fragment_server , 'http://fragments.dbpedia.org/2014/en is a LDFserver';
 
-ok $pattern , 'got a tripple pattern';
+    my $pattern = $frag1->pattern;
 
-ok $frag1 , 'got a client';
+    ok $pattern , 'got a tripple pattern';
 
-my $iterator = $frag1->get_statements();
+    ok $frag1 , 'got a client';
 
-ok $iterator , 'got an iterator on all triples';
+    my $iterator = $frag1->get_statements();
 
-$iterator->take(1)->each(sub {
-    my $model = shift;
+    ok $iterator , 'got an iterator on all triples';
+
+    my $model = $iterator->();
+
+    ok $model , 'got a model';
+
     my $it = $model->get_statements();
 
     ok $it , 'got an iterator';
@@ -31,14 +37,15 @@ $iterator->take(1)->each(sub {
     while (my $triple = $it->next) {
         ok $triple , 'got triples';
     }
-});
 
-$iterator = $frag1->get_statements("http://dbpedia.org/resource/Arthur_Schopenhauer");
+    $iterator = $frag1->get_statements("http://dbpedia.org/resource/Arthur_Schopenhauer");
 
-ok $iterator , 'got an iterator on http://dbpedia.org/resource/Arthur_Schopenhauer';
+    ok $iterator , 'got an iterator on http://dbpedia.org/resource/Arthur_Schopenhauer';
 
-$iterator->take(1)->each(sub {
-    my $model = shift;
+    $model = $iterator->();
+
+    ok $model , 'got a model';
+
     my $it = $model->get_statements();
 
     ok $it , 'got an iterator';
@@ -51,16 +58,15 @@ $iterator->take(1)->each(sub {
         my $object    = $triple->predicate->as_string;
 
         print "$subject $predicate $object\n";
-
     }
-});
 
-my $frag2 = $pkg->new(url => 'http://biblio.ugent.be/publication/4384199.rdf');
+    my $frag2 = $pkg->new(url => 'http://biblio.ugent.be/publication/4384199.rdf');
 
-ok ! $frag2->is_fragment_server , 'http://biblio.ugent.be/publication/4384199.rdf is not a LDF server';
+    ok ! $frag2->is_fragment_server , 'http://biblio.ugent.be/publication/4384199.rdf is not a LDF server';
 
-my $frag3 = $pkg->new(url => 'http://kasei.us/2009/09/sparql/sd-example.ttl');
+    my $frag3 = $pkg->new(url => 'http://kasei.us/2009/09/sparql/sd-example.ttl');
 
-ok ! $frag3->is_fragment_server , 'http://kasei.us/2009/09/sparql/sd-example.ttl is not a LDF server';
+    ok ! $frag3->is_fragment_server , 'http://kasei.us/2009/09/sparql/sd-example.ttl is not a LDF server';
+}
 
 done_testing;
