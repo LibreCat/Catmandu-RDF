@@ -9,8 +9,8 @@ BEGIN { use_ok $pkg = 'Catmandu::RDF::Fragments'; }
 require_ok $pkg;
 
 SKIP: {
-  skip "networking requires ALLOW_NETWORKING set", 1
-    unless $ENV{'ALLOW_NETWORKING'};
+  skip "networking requires RELEASE_TESTING set", 1
+    unless $ENV{'RELEASE_TESTING'};
 
     my $frag1 = $pkg->new(url => 'http://fragments.dbpedia.org/2014/en');
 

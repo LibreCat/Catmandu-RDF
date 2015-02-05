@@ -61,8 +61,8 @@ foreach my $file (qw(t/example.ttl t/example.rdf)) {
 }
 
 SKIP: {
-  skip "networking requires ALLOW_NETWORKING set", 1
-    unless $ENV{'ALLOW_NETWORKING'};
+  skip "networking requires RELEASE_TESTING set", 1
+    unless $ENV{'RELEASE_TESTING'};
 
     {
         my $sparql   =<<END;
