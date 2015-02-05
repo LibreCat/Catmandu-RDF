@@ -46,7 +46,7 @@ SKIP: {
 
     ok $model , 'got a model';
 
-    my $it = $model->get_statements();
+    $it = $model->get_statements();
 
     ok $it , 'got an iterator';
 
