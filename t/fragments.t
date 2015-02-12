@@ -12,6 +12,8 @@ SKIP: {
   skip "networking requires RELEASE_TESTING set", 1
     unless $ENV{'RELEASE_TESTING'};
 
+    binmode(STDOUT,':encoding(UTF-8)');
+    
     my $frag1 = $pkg->new(url => 'http://fragments.dbpedia.org/2014/en');
 
     ok $frag1->is_fragment_server , 'http://fragments.dbpedia.org/2014/en is a LDFserver';
