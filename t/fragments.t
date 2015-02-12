@@ -50,7 +50,7 @@ SKIP: {
 
     ok $it , 'got an iterator';
 
-    while (my $triple = $it->next) {
+    while (my $triple = $it->next()) {
         ok $triple , 'got triples';
 
         my $subject   = $triple->subject->as_string;

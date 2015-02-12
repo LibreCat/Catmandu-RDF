@@ -5,9 +5,11 @@ use Catmandu::Util qw(:is);
 use Moo;
 use RDF::NS;
 use RDF::Trine;
+use RDF::Query;
 use URI::Escape;
 use LWP::UserAgent;
 use HTTP::Request::Common;
+use Clone 'clone';
 use Data::Dumper;
 
 our $VERSION = '0.01';
@@ -45,6 +47,259 @@ sub is_fragment_server {
     shift->pattern ? 1 : 0;
 }
 
+sub get_sparql {
+    my ($self,$sparql) = @_;
+
+    $self->log->debug("parsing $sparql");
+    my $query = RDF::Query->new($sparql);
+
+    unless (defined $query) {
+        $self->log->error("failed to parse $sparql");
+        return undef;
+    }
+
+    my $bgps = $self->_parse_bgp($query->pattern);
+
+    unless (is_array_ref($bgps)) {
+        $self->log->error("can't parse bgp for sparql");
+        return undef;
+    }
+
+    $self->find_variable_bindings($bgps);
+}
+
+sub find_variable_bindings {
+    my ($self,$bgps) = @_;
+    my @results = ();
+
+    my $it;
+
+    ($it,$bgps) = $self->_find_variable_bindings($bgps);
+
+    while (my $binding = $it->() ) {
+        
+        my $bgps_prime = $self->_apply_binding($binding,$bgps);
+
+        my ($a,$b) = $self->_find_variable_bindings($bgps_prime);
+
+        while (my $binding_prime = $a->()) {
+            while ( my($key, $value) = each %$binding_prime ) {
+                $binding->{$key} = $value;
+            }
+
+            push @results , $binding;
+        }
+    }
+
+    my $sub  = sub {
+        shift @results;
+    };
+}
+
+sub _find_variable_bindings {
+    my ($self,$bgps) = @_;
+
+    my ($pattern,$rest) = $self->_find_best_pattern($bgps);
+
+    return undef unless defined $pattern;
+
+    my $it = $self->get_statements($pattern);
+
+    my $sub = sub {
+        state $bindings = $self->_find_bindings_for_iterator($it,$pattern);
+
+        my $b = shift @$bindings;
+
+        return undef unless $b;
+
+        $b;
+    };
+
+    return ($sub,$rest);
+}
+
+sub _apply_binding {
+    my ($self,$binding,$bgps) = @_;
+
+    return unless is_array_ref($bgps) && @$bgps > 0;
+
+    my $copy = clone $bgps;
+    my @new  = ();
+
+    for my $pattern (@$copy) {
+        for (qw(subject predicate object)) {
+            my $val = $pattern->{$_};
+            $pattern->{$_} = $binding->{$val} if defined($val) && $binding->{$val};
+        }
+        push @new, $pattern;
+    }
+
+    return \@new;
+}
+
+sub _find_bindings_for_iterator {
+    my ($self,$iterator,$pattern) = @_;
+    my @bindings = ();
+
+    while(my $model = $iterator->()) {
+        my $b = $self->_find_bindings_for_model($model,$pattern);
+        push @bindings , @$b if defined $b;
+    }
+
+    return \@bindings;
+}
+
+sub _find_bindings_for_model {
+    my ($self,$model,$pattern) = @_;
+    my %pattern_var_map = map { $pattern->{$_} =~ /^\?/ ? ($pattern->{$_} , $_) : () } keys %$pattern;
+    my $num_of_bindings = keys %pattern_var_map;
+
+    return [{}] unless $num_of_bindings > 0;
+
+    my @bindings = ();
+
+    my $it = $model->get_statements();
+
+    while (my $t = $it->next) {  
+        my %var_map = %pattern_var_map;
+
+        for (keys %var_map) {
+            my $method   = $var_map{$_};
+            $var_map{$_} = $t->$method->value;
+        }
+
+        push @bindings , {%var_map};
+    }
+
+    return \@bindings;
+}
+
+# Create a pattern which binds optiomally to the graph pattern
+#
+# Usage:
+#
+#    my $triples = [
+#              { subject => ... , predicate => ... , object => ... } , #tp1
+#              { subject => ... , predicate => ... , object => ... } , #tp2
+#              ...
+#              { subject => ... , predicate => ... , object => ... } , #tpN
+#    ];
+#
+#    my ($pattern, $rest) = $self->_find_best_pattern($triples);
+#
+#    $pattern => Pattern in $triples which least ammount of results
+#    $rest    => All patterns in $triples except $pattern      
+#  
+sub _find_best_pattern {
+    my ($self,$triples) = @_;
+
+    return undef unless @$triples > 0;
+
+    # If we only have one tripple pattern, the use it to create the bind
+    if (@$triples == 1) {
+        return $triples->[0] , [];
+    }
+
+    my $best_pattern = undef;
+    my $best_count   = undef;
+
+    for my $pattern (@$triples) {
+        my $count = $self->_total_triples($pattern);
+
+        if ($count == 0) {
+            $best_pattern = undef;
+            $best_count   = 0;
+            last;
+        }
+        elsif (!defined $best_count || $count < $best_count) {
+            $best_count   = $count;
+            $best_pattern = $pattern;
+        }
+    }   
+
+    return (undef,$triples) unless defined $best_pattern;
+
+    my @rest_triples = map { is_same($_,$best_pattern) ? () : ($_) } @$triples;
+
+    return ($best_pattern, \@rest_triples);
+}
+
+# Find the total number of trilpes available for a pattern
+#
+# Usage:
+#
+#    my $count = $self->_total_triples(
+#                { subject => ... , predicate => ... , object => ...}
+#                );
+# Where 
+#       $count is a number
+sub _total_triples {
+    my ($self,$pattern) = @_;
+
+    # Retrieve one...
+    my $iterator = $self->get_statements($pattern);
+
+    return 0 unless $iterator;
+
+    my ($model,$info) = $iterator->();
+
+    $info->{hydra_totalItems};
+}
+
+# For an parsed SPARQL query find all BGP triples
+sub _parse_bgp {
+    my ($self,@pattern) = @_;
+
+    for my $p (@pattern) {
+        if ($p->isa('RDF::Query::Algebra::GroupGraphPattern')) {
+             my @triples = ();
+             for my $bgp ($p->patterns) {
+                push @triples , map { $self->_parse_triple_pattern($_)} $bgp->triples;
+             }
+             return \@triples;
+        }
+        else {
+            return $self->_parse_bgp($p->pattern);
+        }
+    }
+
+    return undef;
+}
+
+# For an BGP triple create a fragment pattern
+sub _parse_triple_pattern {
+    my ($self,$triple) = @_;
+    my ($subject,$predicate,$object);
+
+    if ($triple->subject->isa('RDF::Query::Node::Resource')) {
+        $subject = $triple->subject->value;
+    }
+    elsif ($triple->subject->isa('RDF::Query::Node::Variable')) {
+        $subject = '?' . $triple->subject->value;
+    }
+
+    if ($triple->predicate->isa('RDF::Query::Node::Resource')) {
+        $predicate = $triple->predicate->value;
+    }
+    elsif ($triple->predicate->isa('RDF::Query::Node::Variable')) {
+        $predicate = '?' . $triple->predicate->value;
+    }
+
+    if ($triple->object->isa('RDF::Query::Node::Resource') || 
+        $triple->object->isa('RDF::Query::Node::Literal') ) {
+        $object = $triple->object->value;
+    }
+    elsif ($triple->object->isa('RDF::Query::Node::Variable')) {
+        $object = '?' . $triple->object->value;
+    }
+
+    return {
+        subject   => $subject ,
+        predicate => $predicate , 
+        object    => $object
+    };
+}
+
 # Dynamic find out which tripple patterns need to be used to query the fragment server
 # Returns a hash:
 # {
@@ -56,11 +311,11 @@ sub is_fragment_server {
 sub get_pattern {
     my ($self) = @_;
     my $url   = $self->url;
-    my $model =    $self->get_fragment($url);
+    my $model = $self->get_fragment($url);
 
     return undef unless defined $model;
 
-    my $info  = $self->_parse_model($model,$url);
+    my $info  = $self->_model_metadata($model,$url);
 
     my $pattern;
 
@@ -85,9 +340,19 @@ sub get_pattern {
     $pattern;
 }
 
-# Given $subject,$predicate,$object return a generator for RDF::Trine::Model-s
+# Given $subject,$predicate,$object return a generator for RDF::Trine::Model
 sub get_statements {
-    my ($self,$subject,$predicate,$object) = @_;
+    my ($self,@triple) = @_;
+    my ($subject,$predicate,$object);
+
+    if (@triple == 3) {
+        ($subject,$predicate,$object) = @triple;
+    }
+    elsif (is_hash_ref($triple[0])) {
+        $subject   = $triple[0]->{subject};
+        $predicate = $triple[0]->{predicate};
+        $object    = $triple[0]->{object};
+    }
 
     my $pattern = $self->pattern;
 
@@ -109,21 +374,23 @@ sub get_statements {
 
     my $sub = sub {
         return unless defined $url;
-        my $model =    $self->get_fragment($url);
+        my $model = $self->get_fragment($url);
 
         return undef unless defined $model;
 
-        my $info  = $self->_parse_model($model,$url);
+        my $info  = $self->_model_metadata($model,$url, clean => 1);
         $url = $info->{hydra_nextPage};
 
-        $model;
+        wantarray ? ($model,$info) : $model;
     };
 
     $sub;
 }
 
+# Fetch a result page from fragment server
 sub get_fragment {
     my ($self,$url) = @_;
+
     $self->log->debug("fetching: $url");
 
     my $req = GET $url, Accept => 'text/turtle';
@@ -139,6 +406,7 @@ sub get_fragment {
     }
 }
 
+# Parse turtle into an RDF::Trine::Model
 sub parse_string {
     my ($self,$string) = @_;
     $self->log->debug("parsing: $string");
@@ -157,14 +425,28 @@ sub parse_string {
     $model;
 }
 
-sub _parse_model {
-    my ($self,$model,$this_uri) = @_;
+# Create a hash with fragment metadata from a RDF::Trine::Model
+# parameters:
+#    $model    - RDF::Trine::Model
+#    $this_uri - result page URL
+#    %opts
+#        clean => 1 - remove the metadata from the model 
+sub _model_metadata {
+    my ($self,$model,$this_uri,%opts) = @_;
 
     my $info = {};
 
-    $self->_build_info($model, {
+    $self->_build_metadata($model, {
         subject => RDF::Trine::Node::Resource->new($this_uri)
     } , $info);
+
+    if ($opts{clean}) {
+        $model->remove_statements(
+            RDF::Trine::Node::Resource->new($this_uri),
+            undef,
+            undef
+        );
+    }
 
     for my $predicate (
         'http://www.w3.org/ns/hydra/core#variable' ,
@@ -173,23 +455,44 @@ sub _parse_model {
         'http://www.w3.org/ns/hydra/core#template' ,
         'http://www.w3.org/ns/hydra/core#membe'    ,
     ) {
-        $self->_build_info($model, {
+        $self->_build_metadata($model, {
             predicate => RDF::Trine::Node::Resource->new($predicate)
         }, $info);
+
+        if ($opts{clean}) {
+            $model->remove_statements(
+                    undef,
+                    RDF::Trine::Node::Resource->new($predicate) ,
+                    undef);
+        }
     }
 
     my $source = $info->{dct_source}->[0] if is_array_ref($info->{dct_source});
 
     if ($source) {
-        $self->_build_info($model, {
+        $self->_build_metadata($model, {
             subject => RDF::Trine::Node::Resource->new($source)
         }, $info);
+
+        if ($opts{clean}) {
+            $model->remove_statements(
+                RDF::Trine::Node::Resource->new($source),
+                undef,
+                undef
+            );
+            $model->remove_statements(
+                undef,
+                undef,
+                RDF::Trine::Node::Resource->new($source)
+            );
+        }
     }
 
     $info;
 }
 
-sub _build_info {
+# Helper method for _parse_model
+sub _build_metadata {
     my ($self, $model, $triple, $info) = @_;
     
     my $iterator = $model->get_statements(
@@ -241,6 +544,11 @@ Catmandu::RDF::Fragments - Linked Data Fragments client
     my $client = Catmandu::RDF::Fragments->new(url => 'http://fragments.dbpedia.org/2014/en');
 
     my $iterator = $client->get_statements($subject, $predicate, $object);
+
+    my $iterator = $client->get_sparql(<<EOF);
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+SELECT * WHERE { dbpedia:Arthur_Schopenhauer ?predicate ?object . }
+EOF
 
     while (my $model = $iterator->()) {
         # $model is a RDF::Trine::Model
