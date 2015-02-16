@@ -76,15 +76,6 @@ END
         ok $ref->{title} , 'got a title';
         ok $ref->{book} , 'got a book';
     }
-
-    {
-        my $url = 'http://fragments.dbpedia.org/2014/en?subject=http://dbpedia.org/resource/Arthur_Schopenhauer';
-        my $importer = importer('RDF', url => $url , ldf => 1);
-        ok $importer , 'got a LDF importer';
-
-        my $ref = $importer->first;
-        ok $ref->{'http://dbpedia.org/resource/Arthur_Schopenhauer'} , 'got information about Arthur';
-    }
 }
 
 done_testing;

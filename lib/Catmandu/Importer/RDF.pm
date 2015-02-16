@@ -45,10 +45,6 @@ has sparql => (
     is      => 'ro',
 );
 
-has ldf => (
-    is      => 'ro',
-);
-
 has predicate_map => (
     is      => 'ro',
 );
@@ -60,66 +56,12 @@ has triples => (
 sub generator {
     my ($self) = @_;
 
-    if ($self->ldf) {
-        return $self->ldf_generator;
-    }
-    elsif ($self->sparql) {
+    if ($self->sparql) {
         return $self->sparql_generator;
     }
     else {
         return $self->rdf_generator;
     }
-}
-
-sub ldf_generator {
-    my ($self) = @_;
-
-    my $ldf = Catmandu::RDF::Fragments->new( url => $self->url );
-
-    sub {
-        state $iterator = $ldf->get_statements;
-
-        return undef unless $iterator; 
-
-        state $stream = $iterator->();
-
-        return undef unless $stream;
-
-        my $aref = {};
-
-        if ($self->triples) {
-            # Create a stream from the current model...
-            state $rdf_stream = $stream->as_stream;
-
-            # Keep reading triples from the current stream...
-            if (my $triple = $rdf_stream->next) {
-                $aref = $self->encoder->triple(
-                            $triple->subject,
-                            $triple->predicate,
-                            $triple->object
-                );
-            } else {
-                return ($stream = undef);
-            }
-
-            # Until the stream is empty and we need to fill a new stream
-            unless ($rdf_stream->peek) {
-                $stream = $iterator->();
-                $rdf_stream = $stream->as_stream if defined $stream;
-            }
-        }
-        else {
-            $self->encoder->add_hashref( $stream->as_hashref, $aref );
-
-            if ($self->url) {
-                $aref->{_url} = $self->url;
-            }
-
-            $stream = $iterator->();
-        }
-
-        return $aref;
-    };
 }
 
 sub sparql_generator {
@@ -267,12 +209,6 @@ Command line client C<catmandu>:
       --url http://dbpedia.org/sparql \
       --sparql "SELECT ?film WHERE { ?film <http://purl.org/dc/terms/subject> <http://dbpedia.org/resource/Category:French_films> }"
 
-    # Support for Linked Data Fragments
-    catmandu convert RDF \
-      --url http://fragments.dbpedia.org/2014/en \
-      --ldf 1
-
-
 In Perl code:
 
     use Catmandu::Importer::RDF;
@@ -331,10 +267,6 @@ Default configuration options of L<Catmandu::Importer>.
 =item sparql
 
 The SPARQL query to be executed on the URL endpoint (currectly only SELECT is supported)
-
-=item ldf
-
-The endpoint at the endpoint is a Linked Data fragment server (See: http://linkeddatafragments.org/)
 
 =back
 
