@@ -9,7 +9,6 @@ use RDF::Trine::Store::SPARQL;
 use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
-use Catmandu::RDF::Fragments;
 use Data::Dumper;
 
 our $VERSION = '0.22';
