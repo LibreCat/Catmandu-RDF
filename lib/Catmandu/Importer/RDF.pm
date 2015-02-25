@@ -24,7 +24,7 @@ has base => (
     is      => 'ro', 
     lazy    => 1, 
     builder => sub {
-        defined $_[0]->file ? "file://".$_[0] : "http://example.org/";
+        defined $_[0]->file ? "file://".$_[0]->file : "http://example.org/";
     }
 );
 
