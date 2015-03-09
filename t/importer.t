@@ -60,4 +60,15 @@ foreach my $file (qw(t/example.ttl t/example.rdf)) {
     is_deeply $importer->first, $expect, 'round-trip export-import-export';
 }
 
+{
+    my $sparql   =<<END;
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+SELECT * WHERE { ?book dc:title ?title . }
+END
+    my $importer = importer('RDF', url => 'http://sparql.org/books/sparql' , sparql => $sparql);
+    my $ref = $importer->first;
+    ok $ref->{title} , 'got a title';
+    ok $ref->{book} , 'got a book';
+}
+
 done_testing;
