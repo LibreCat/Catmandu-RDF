@@ -1,6 +1,9 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - added support of SPARQL
+  - fixed some unit tests
+  - rewrote aref_query fix
 
 0.23  2014-12-11 16:41:22 CET
   - fix bnode mapping bug
@@ -24,9 +27,6 @@ Changelog for Catmandu-RDF
 0.17  2014-10-02 14:26:35 CEST
   - Migrate to Dist::Milla
   - Adjust to aREF 0.19
-
-0.16 2014-09-11T06:47:28
- - No changes foun
 
 0.15 2014-07-17T11:35:04
  - document and test count method

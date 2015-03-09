@@ -7,7 +7,7 @@ use RDF::Trine::Serializer;
 use RDF::Trine::Model;
 use RDF::aREF;
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Exporter';

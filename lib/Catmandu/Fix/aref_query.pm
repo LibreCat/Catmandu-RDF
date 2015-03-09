@@ -2,16 +2,11 @@ package Catmandu::Fix::aref_query;
 
 use Catmandu::Sane;
 use Moo;
-use RDF::aREF::Query;
 use Catmandu::Fix;
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 with 'Catmandu::Fix::Base';
-
-has subject => (
-    is => 'ro',
-);
 
 has query => (
     is => 'ro',
@@ -22,10 +17,14 @@ has path => (
     is => 'ro',
 );
 
+has subject => (
+    is => 'ro',
+);
+ 
 around 'BUILDARGS', sub {
     my $orig = shift;
     my $self = shift;
-
+ 
     if (@_ == 3) {
         $orig->($self, subject => $_[0], query => $_[1], path => $_[2] );
     } elsif (@_ == 2) {

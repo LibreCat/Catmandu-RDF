@@ -52,6 +52,11 @@ has sparql => (
     }
 );
 
+has sparql_result => (
+    is      => 'ro',
+    default => sub { 'simple' }
+);
+
 has predicate_map => (
     is      => 'ro',
 );
@@ -76,6 +81,8 @@ sub sparql_generator {
     warn "--triples not active for sparql queries" if ($self->triples);
     warn "--predicate_map not active for sparql queries" if ($self->predicate_map);
 
+    my $encoder = RDF::aREF::Encoder->new( ns => {} ); # never return qnames
+
     sub {
         state $stream = $self->_sparql_stream;
         if (my $row = $stream->next) {
@@ -83,7 +90,16 @@ sub sparql_generator {
                 my $ref = {};
                 for (keys %$row) {
                     my $val = $row->{$_};
-                    $ref->{$_} = $self->encoder->object($val);
+                    $ref->{$_} = $self->sparql_result eq 'aref' 
+                               ? $encoder->object($val) : do { # TODO: clean up
+                                  if ( $val->is_resource ) {
+                                     $val->uri_value;
+                                  } elsif ( $val->is_literal) {
+                                     $val->literal_value;
+                                  } else {
+                                     $val->as_string
+                                  }
+                               };
                 }
                 return $ref;
             } else {
@@ -268,7 +284,14 @@ Default configuration options of L<Catmandu::Importer>.
 
 The SPARQL query to be executed on the URL endpoint (currectly only SELECT is
 supported).  The importer tries to automatically add missing PREFIX statements
-frm the default namespace prefixes.
+from the default namespace prefixes. 
+
+=item sparql_result
+
+Encoding of SPARQL result values. With C<aref>, query results are encoded in
+aREF format, with URIs in C<E<lt>> and C<E<gt>> (no qNames) and literal nodes
+appended by C<@> and optional language code. By default (value C<simple>), all
+RDF nodes are simplfied to their literal form.
 
 =back
 
