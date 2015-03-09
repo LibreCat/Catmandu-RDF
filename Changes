@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.24  2015-03-09 13:20:23 CET
   - added support of SPARQL
   - fixed some unit tests
   - rewrote aref_query fix
