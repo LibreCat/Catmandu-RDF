@@ -9,7 +9,6 @@ use RDF::Trine::Store::SPARQL;
 use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
-use Data::Dumper;
 
 our $VERSION = '0.22';
 
@@ -42,6 +41,15 @@ has encoder => (
 
 has sparql => (
     is      => 'ro',
+    lazy    => 1,
+    trigger  => sub {
+        my ($sparql, $ns) = ($_[1], $_[0]->ns);
+        my %prefix;
+        # guess requires prefixes (don't override existing). Don't mind false positives
+        $prefix{$_} = 1 for ($sparql =~ /\s([a-z][a-z0-0_-]*):/mig);
+        delete $prefix{$_} for ($sparql =~ /PREFIX\s+([^:]+):/mg);
+        $_[0]->{sparql} = join "\n", (map { $ns->SPARQL($_) } keys %prefix), $sparql;
+    }
 );
 
 has predicate_map => (
@@ -57,8 +65,7 @@ sub generator {
 
     if ($self->sparql) {
         return $self->sparql_generator;
-    }
-    else {
+    } else {
         return $self->rdf_generator;
     }
 }
@@ -74,19 +81,15 @@ sub sparql_generator {
         if (my $row = $stream->next) {
             if (ref $row eq 'RDF::Trine::VariableBindings') {
                 my $ref = {};
-
                 for (keys %$row) {
                     my $val = $row->{$_};
-
                     $ref->{$_} = $self->encoder->object($val);
                 }
                 return $ref;
-            }
-            else {
+            } else {
                 die "Expected a RDF::Trine::VariableBindings but got a " . ref($row);
             }
-        }
-        else {
+        } else {
             return ($stream = undef);
         }
     };
@@ -204,7 +207,7 @@ Command line client C<catmandu>:
 
     catmandu convert RDF --file rdfdump.ttl to JSON
 
-    catmandu convert RDF --url http://dbpedia.org/sparql --sparql "SELECT ?film WHERE { ?film <http://purl.org/dc/terms/subject> <http://dbpedia.org/resource/Category:French_films> }"
+    catmandu convert RDF --url http://dbpedia.org/sparql --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
 
 In Perl code:
 
@@ -263,7 +266,9 @@ Default configuration options of L<Catmandu::Importer>.
 
 =item sparql
 
-The SPARQL query to be executed on the URL endpoint (currectly only SELECT is supported)
+The SPARQL query to be executed on the URL endpoint (currectly only SELECT is
+supported).  The importer tries to automatically add missing PREFIX statements
+frm the default namespace prefixes.
 
 =back
 

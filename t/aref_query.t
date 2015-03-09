@@ -24,7 +24,7 @@ $rdf = importer('RDF', file => 't/example.ttl')->first;
 sub fix {
     my $rdf = shift;
     Catmandu::Fix::aref_query->new(@_)->fix($rdf);
-    delete $rdf->{@_[-1]};
+    delete $rdf->{$_[-1]};
 }
 
 is fix($rdf,'http://example.org','dc_title','label'), "B\x{c4}R";
