@@ -4,7 +4,7 @@
       "Jakob Voß"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.8, Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.141520",
+   "generated_by" : "Dist::Zilla version 5.031, Dist::Milla version v1.0.5, CPAN::Meta::Converter version 2.142690",
    "license" : [
       "perl_5"
    ],
@@ -31,7 +31,6 @@
       },
       "develop" : {
          "requires" : {
-            "Dist::Milla" : "v1.0.8",
             "Test::Pod" : "1.41"
          }
       },
@@ -40,7 +39,8 @@
             "Catmandu" : "0.9209",
             "RDF::NS" : "20140910",
             "RDF::Trine" : "1.0",
-            "RDF::aREF" : "0.23"
+            "RDF::aREF" : "0.23",
+            "XML::Parser" : "2.44"
          }
       }
    },
