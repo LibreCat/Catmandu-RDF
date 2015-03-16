@@ -6,6 +6,10 @@ use Moo;
 use RDF::Trine::Parser;
 use RDF::Trine::Model;
 use RDF::Trine::Store::SPARQL;
+use RDF::Trine::Store::LDF;
+use RDF::Trine::Store;
+use RDF::Query;
+use RDF::LDF;
 use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
@@ -86,7 +90,7 @@ sub sparql_generator {
     sub {
         state $stream = $self->_sparql_stream;
         if (my $row = $stream->next) {
-            if (ref $row eq 'RDF::Trine::VariableBindings') {
+            if (ref $row eq 'RDF::Query::VariableBindings' || ref $row eq 'RDF::Trine::VariableBindings') {
                 my $ref = {};
                 for (keys %$row) {
                     my $val = $row->{$_};
@@ -103,7 +107,7 @@ sub sparql_generator {
                 }
                 return $ref;
             } else {
-                die "Expected a RDF::Trine::VariableBindings but got a " . ref($row);
+                die "Expected a RDF::Query::VariableBindings or RDF::Trine::VariableBindings but got a " . ref($row);
             }
         } else {
             return ($stream = undef);
@@ -169,14 +173,39 @@ sub _sparql_stream {
 
     $self->log->info("parsing: " . $self->sparql);
 
-    my $store = RDF::Trine::Store::SPARQL->new($self->url);
+    my $store;
+
+    # Check if this server is an LDF server
+    my $ldf_client = RDF::LDF->new(url => $self->url);
+
+    if ($ldf_client->is_fragment_server) {
+        $store = RDF::Trine::Store->new_with_config({
+                    storetype => 'LDF',
+                    url => $self->url
+        });
+    }
+    else {
+        $store = RDF::Trine::Store->new_with_config({
+                    storetype => 'SPARQL',
+                    url => $self->url
+        });
+    }
 
     unless ($store) {
         $self->log->error("failed to connect to " . $self->url);
         return undef;
     }
 
-    my $iterator = $store->get_sparql($self->sparql);
+    my $model =  RDF::Trine::Model->new($store);
+
+    my $rdf_query = RDF::Query->new($self->sparql);
+
+    unless ($rdf_query) {
+        $self->log->error("failed to parse " . $self->sparql);
+        return undef;
+    }
+
+    my $iterator = $rdf_query->execute($model);
 
     unless ($iterator) {
         $self->log->error("failed to execute " . $self->sparql . " at " . $self->url);
@@ -223,8 +252,12 @@ Command line client C<catmandu>:
 
     catmandu convert RDF --file rdfdump.ttl to JSON
 
+    # Query a SPARQL endpoint
     catmandu convert RDF --url http://dbpedia.org/sparql --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
 
+    # Query a Linked Data Fragment endpoint
+    catmandu convert RDF --url http://fragments.dbpedia.org/2014/en --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
+    
 In Perl code:
 
     use Catmandu::Importer::RDF;
