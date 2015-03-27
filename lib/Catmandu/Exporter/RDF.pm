@@ -14,30 +14,46 @@ with 'Catmandu::Exporter';
 
 # internal attributes
 has decoder => (
-    is => 'ro',
-    lazy => 1, 
-    builder => sub {
-        RDF::aREF::Decoder->new( 
-            ns => $_[0]->ns // ($_[0]->ns eq 0 ? { } : RDF::NS->new),
-            callback => $_[0]->model 
-        );
-    }
+    is => 'lazy'
 );
 
 has serializer => (
-    is => 'ro', 
-    lazy => 1, 
-    builder => sub {
-        # TODO: base_uri and namespaces
-        RDF::Trine::Serializer->new($_[0]->type // 'RDFXML')
-    }
+    is => 'lazy'
 );
 
 has model => (
-    is => 'ro', 
-    lazy => 1, 
-    builder => sub { RDF::Trine::Model->new }
+    is => 'lazy'
 );
+
+sub _build_decoder {
+    RDF::aREF::Decoder->new( 
+            ns => $_[0]->ns // ($_[0]->ns eq 0 ? { } : RDF::NS->new),
+            callback => $_[0]->model 
+    );
+}
+
+sub _build_serializer {
+    RDF::Trine::Serializer->new($_[0]->type // 'RDFXML');
+}
+
+sub _build_model {
+    my $self       = shift;
+
+    # Streaming output when we have type => NTriples
+    if (defined $self->type && $self->type =~ /^(NTriples)$/io) {
+        my $sub = sub {
+            require RDF::Trine::Statement;
+            eval {
+                my $st = RDF::aREF::Decoder::trine_statement(@_);
+                $self->fh->print($self->serializer->statement_as_string($st));
+            };
+            $self->decoder->error($@) if $@;
+        };
+    }
+    else {
+        RDF::Trine::Model->new;
+    }
+}
 
 sub add {
     my ($self, $aref) = @_;
@@ -46,9 +62,12 @@ sub add {
 
 sub commit {
     my ($self) = @_;
-    $self->model->end_bulk_ops;
-    $self->decoder->clean_bnodes;
-    $self->serializer->serialize_model_to_file( $self->fh, $self->model );
+
+    if (ref $self->model eq 'RDF::Trine::Model') {
+        $self->model->end_bulk_ops;
+        $self->decoder->clean_bnodes;
+        $self->serializer->serialize_model_to_file( $self->fh, $self->model );
+    }
 }
 
 =head1 NAME
@@ -97,6 +116,9 @@ for RDF/Turtle with L<RDF::Trine::Serializer::Turtle>. The first letter is
 transformed uppercase, so C<< format => 'turtle' >> will work as well. In
 addition there are aliases C<ttl> for C<Turtle>, C<n3> for C<Notation3>, C<xml>
 and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
+
+When the option C<type> is set to 'NTriples' the export can be streamed in all 
+other cases the results are exported in bulk after commit().
 
 =item ns
 
