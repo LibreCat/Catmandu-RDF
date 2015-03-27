@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - support streaming of NTriple data
 
 0.24  2015-03-09 13:20:23 CET
   - added support of SPARQL

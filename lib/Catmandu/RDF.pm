@@ -6,7 +6,7 @@ use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -68,15 +68,16 @@ between RDF and  other data formats.
 
 =item L<Catmandu::Exporter::RDF>
 
-Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...).
+Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...)
 
 =item L<Catmandu::Importer::RDF>
 
-Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...).
+Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...) or import from a SPARQL
+endpoint
 
 =item L<Catmandu::Fix::aref_query>
 
-Copy values of RDF data in aREF format to a new field.
+Copy values of RDF data in aREF format to a new field
 
 =back
 

@@ -23,15 +23,16 @@ between RDF and  other data formats.
 
 - [Catmandu::Exporter::RDF](https://metacpan.org/pod/Catmandu::Exporter::RDF)
 
-    Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...).
+    Serialize RDF data (as RDF/XML, RDF/JSON, Turtle, NTriples, RDFa...)
 
 - [Catmandu::Importer::RDF](https://metacpan.org/pod/Catmandu::Importer::RDF)
 
-    Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...).
+    Parse RDF data (RDF/XML, RDF/JSON, Turtle, NTriples...) or import from a SPARQL
+    endpoint
 
 - [Catmandu::Fix::aref\_query](https://metacpan.org/pod/Catmandu::Fix::aref_query)
 
-    Copy values of RDF data in aREF format to a new field.
+    Copy values of RDF data in aREF format to a new field
 
 # SEE ALSO
 

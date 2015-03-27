@@ -10,7 +10,7 @@ use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
 
-our $VERSION = '0.22';
+our $VERSION = '0.25';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
@@ -223,7 +223,8 @@ Command line client C<catmandu>:
 
     catmandu convert RDF --file rdfdump.ttl to JSON
 
-    catmandu convert RDF --url http://dbpedia.org/sparql --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
+    catmandu convert RDF --url http://dbpedia.org/sparql 
+                         --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
 
 In Perl code:
 
