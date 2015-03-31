@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - added support of Linked Data Fragments
 
 0.25  2015-03-27 13:53:59 CET
   - support streaming of NTriple data
