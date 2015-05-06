@@ -89,7 +89,7 @@ sub sparql_generator {
 
     sub {
         state $stream = $self->_sparql_stream;
-        if (my $row = $stream->next) {
+        if (defined($stream) && defined(my $row = $stream->next)) {
             if (ref $row eq 'RDF::Query::VariableBindings' || ref $row eq 'RDF::Trine::VariableBindings') {
                 my $ref = {};
                 for (keys %$row) {

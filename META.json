@@ -4,13 +4,13 @@
       "Jakob Voß"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.031, Dist::Milla version v1.0.5, CPAN::Meta::Converter version 2.142690",
+   "generated_by" : "Dist::Zilla version 5.035, Dist::Milla version v1.0.15, CPAN::Meta::Converter version 2.150001",
    "license" : [
       "perl_5"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : "2"
+      "version" : 2
    },
    "name" : "Catmandu-RDF",
    "no_index" : {
@@ -31,6 +31,7 @@
       },
       "develop" : {
          "requires" : {
+            "Dist::Milla" : "v1.0.15",
             "Test::Pod" : "1.41"
          }
       },
@@ -57,9 +58,8 @@
          "web" : "https://github.com/LibreCat/Catmandu-RDF"
       }
    },
-   "version" : "0.25",
+   "version" : "0.26",
    "x_contributors" : [
-      "Jakob Voss <jakob@nichtich.de>",
       "Jakob Voss <voss@gbv.de>",
       "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>"
    ]
