@@ -1,5 +1,6 @@
 package Catmandu::Importer::RDF;
 
+use open ':std', ':encoding(utf8)';
 use namespace::clean;
 use Catmandu::Sane;
 use Moo;
@@ -48,6 +49,7 @@ has sparql => (
     lazy    => 1,
     trigger  => sub {
         my ($sparql, $ns) = ($_[1], $_[0]->ns);
+        $sparql = do { local (@ARGV,$/) = $sparql; <> } if $sparql =~ /^\S+$/ && -r $sparql;
         my %prefix;
         # guess requires prefixes (don't override existing). Don't mind false positives
         $prefix{$_} = 1 for ($sparql =~ /\s([a-z][a-z0-0_-]*):/mig);
