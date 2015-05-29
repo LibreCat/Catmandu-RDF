@@ -7,7 +7,7 @@ use RDF::Trine::Serializer;
 use RDF::Trine::Model;
 use RDF::aREF;
 
-our $VERSION = '0.25';
+our $VERSION = '0.27';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Exporter';
@@ -70,15 +70,20 @@ sub commit {
     }
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Exporter::RDF - serialize RDF data
 
 =head1 SYNOPSIS
 
-    use Catmandu::Exporter::RDF;
+In Perl code:
+    
+    use Catmandu -all;
 
-    my $exporter = Catmandu::Exporter::RDF->new(
+    my $exporter = exporter('RDF',
         file => 'export.rdf',
         type => 'XML',
         fix  => 'rdf.fix'
@@ -110,12 +115,12 @@ item in C<add_many> the given fixes will be applied first.
 
 =item type
 
-A serialization form can be set with option C<type>. The option C<type> must
-refer to a subclass name of L<RDF::Trine::Serializer>, for instance C<Turtle>
-for RDF/Turtle with L<RDF::Trine::Serializer::Turtle>. The first letter is
-transformed uppercase, so C<< format => 'turtle' >> will work as well. In
-addition there are aliases C<ttl> for C<Turtle>, C<n3> for C<Notation3>, C<xml>
-and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
+A serialization form can be set with option C<type> with default value
+C<RDFXML>. The option must refer to a subclass of L<RDF::Trine::Serializer>,
+for instance C<Turtle> for RDF/Turtle with L<RDF::Trine::Serializer::Turtle>.
+The first letter is transformed uppercase, so C<< format => 'turtle' >> will
+work as well. In addition there are aliases C<ttl> for C<Turtle>, C<n3> for
+C<Notation3>, C<xml> and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
 
 When the option C<type> is set to 'NTriples' the export can be streamed in all 
 other cases the results are exported in bulk after commit().
@@ -157,5 +162,3 @@ Serialization is based on L<RDF::Trine::Serializer>.
 =encoding utf8
 
 =cut
-
-1;

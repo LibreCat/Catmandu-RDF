@@ -15,7 +15,7 @@ use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
@@ -250,17 +250,19 @@ Catmandu::Importer::RDF - parse RDF data
 
 Command line client C<catmandu>:
 
-    catmandu convert RDF --url http://d-nb.info/gnd/4151473-7 to YAML
+  catmandu convert RDF --url http://d-nb.info/gnd/4151473-7 to YAML
 
-    catmandu convert RDF --file rdfdump.ttl to JSON
+  catmandu convert RDF --file rdfdump.ttl to JSON
 
-    # Query a SPARQL endpoint
-    catmandu convert RDF --url http://dbpedia.org/sparql 
-                         --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
+  # Query a SPARQL endpoint
+  catmandu convert RDF --url http://dbpedia.org/sparql 
+                       --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
 
-    # Query a Linked Data Fragment endpoint
-    catmandu convert RDF --url http://fragments.dbpedia.org/2014/en
-                         --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
+  catmandu convert RDF --url http://example.org/sparql --sparql query.rq
+
+  # Query a Linked Data Fragment endpoint
+  catmandu convert RDF --url http://fragments.dbpedia.org/2014/en
+                       --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
 
 In Perl code:
 
@@ -320,8 +322,9 @@ Default configuration options of L<Catmandu::Importer>.
 =item sparql
 
 The SPARQL query to be executed on the URL endpoint (currectly only SELECT is
-supported).  The importer tries to automatically add missing PREFIX statements
-from the default namespace prefixes. 
+supported).  The query can be supplied as string or as filename. The importer
+tries to automatically add missing PREFIX statements from the default namespace
+prefixes.
 
 =item sparql_result
 

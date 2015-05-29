@@ -6,7 +6,7 @@ use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -51,6 +51,17 @@ Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
 
 =end markdown
 
+=head1 SYNOPSIS
+
+Command line client C<catmandu>:
+
+  catmandu convert RDF --url http://dx.doi.org/10.2474/trol.7.147 
+                       --fix 'aref_query(dct_title,title)' to YAML
+
+  catmandu convert RDF --file rdfdump.nt to RDF --type turtle
+
+See documentation of modules for more examples.
+
 =head1 DESCRIPTION
 
 Catmandu::RDF contains modules for handling RDF data within the L<Catmandu>
@@ -64,7 +75,7 @@ between RDF and  other data formats.
 
 =head1 AVAILABLE MODULES
 
-=over 4
+=over
 
 =item L<Catmandu::Exporter::RDF>
 
