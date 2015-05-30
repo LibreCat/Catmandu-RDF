@@ -8,6 +8,17 @@ Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
 [![Coverage Status](https://coveralls.io/repos/LibreCat/Catmandu-RDF/badge.png)](https://coveralls.io/r/LibreCat/Catmandu-RDF)
 [![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)](http://cpants.cpanauthors.org/dist/Catmandu-RDF)
 
+# SYNOPSIS
+
+Command line client `catmandu`:
+
+    catmandu convert RDF --url http://dx.doi.org/10.2474/trol.7.147 
+                         --fix 'aref_query(dct_title,title)' to YAML
+
+    catmandu convert RDF --file rdfdump.nt to RDF --type turtle
+
+See documentation of modules for more examples.
+
 # DESCRIPTION
 
 Catmandu::RDF contains modules for handling RDF data within the [Catmandu](https://metacpan.org/pod/Catmandu)

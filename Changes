@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - added sparql file option (issue #19)
 
 0.26  2015-05-21 10:38:12 CEST
   - added support of Linked Data Fragments
