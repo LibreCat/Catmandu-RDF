@@ -1,10 +1,14 @@
 use strict;
+use warnings;
+use open ':std', ':encoding(utf8)';
 use Test::More;
 use Catmandu -all;
+use Catmandu::RDF;
 use RDF::Trine;
 use Encode;
 use HTTP::Response;
 use Test::LWP::UserAgent;
+use utf8;
 
 RDF::Trine->default_useragent(user_agent());
 
@@ -35,7 +39,7 @@ RDF::Trine->default_useragent(user_agent());
 done_testing;
 
 sub user_agent {
-    my $ua = Test::LWP::UserAgent->new( agent => "Catmandu::RDF/$Catmand::RDF::VERSION" );
+    my $ua = Test::LWP::UserAgent->new( agent => "Catmandu::RDF/$Catmandu::RDF::VERSION" );
 
     my $example =<<EOF;
 \@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
