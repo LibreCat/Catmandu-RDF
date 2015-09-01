@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - updated dependencies and versions
+  - added minimum perl version
 
 0.27  2015-05-30 14:15:45 CEST
   - added sparql file option (issue #19)
