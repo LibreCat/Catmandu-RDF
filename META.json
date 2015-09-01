@@ -26,7 +26,8 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.034"
+            "Module::Build::Tiny" : "0.034",
+            "perl" : "5.010"
          }
       },
       "develop" : {
@@ -42,14 +43,16 @@
             "RDF::NS" : "20140910",
             "RDF::Query" : "2.913",
             "RDF::Trine" : "1.013",
-            "RDF::aREF" : "0.25"
+            "RDF::aREF" : "0.25",
+            "perl" : "5.01301"
          }
       },
       "test" : {
          "requires" : {
             "Encode" : "0",
             "Test::LWP::UserAgent" : "0.025",
-            "Test::More" : "0.99"
+            "Test::More" : "0.99",
+            "perl" : "5.01301"
          }
       }
    },
@@ -67,6 +70,7 @@
    },
    "version" : "0.27",
    "x_contributors" : [
+      "Alan Berndt <alan@eatabrick.org>",
       "Jakob Voß <jakob.voss@gbv.de>",
       "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>"
    ]
