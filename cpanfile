@@ -1,3 +1,5 @@
+requires 'perl', 'v5.13.1';
+
 requires 'Catmandu', '0.9209';
 requires 'RDF::LDF', '0.10';
 requires 'RDF::NS', '20140910';

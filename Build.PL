@@ -2,6 +2,6 @@
 use strict;
 use warnings;
 
-use 5.006;
+use v5.13.1;
 use Module::Build::Tiny 0.039;
 Build_PL();
