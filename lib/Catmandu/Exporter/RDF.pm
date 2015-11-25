@@ -7,7 +7,7 @@ use RDF::Trine::Serializer;
 use RDF::Trine::Model;
 use RDF::aREF;
 
-our $VERSION = '0.27';
+our $VERSION = '0.28';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Exporter';
@@ -27,21 +27,21 @@ has model => (
 
 sub _build_decoder {
     RDF::aREF::Decoder->new( 
-            ns => $_[0]->ns // ($_[0]->ns eq 0 ? { } : RDF::NS->new),
-            callback => $_[0]->model 
+        ns => $_[0]->ns // ($_[0]->ns eq 0 ? { } : RDF::NS->new),
+        callback => $_[0]->model 
     );
 }
 
 sub _build_serializer {
-    RDF::Trine::Serializer->new($_[0]->type // 'RDFXML');
+    RDF::Trine::Serializer->new($_[0]->type // 'ntriples');
 }
 
 sub _build_model {
-    my $self       = shift;
+    my $self = shift;
 
     # Streaming output when we have type => NTriples
-    if (defined $self->type && $self->type =~ /^(NTriples)$/io) {
-        my $sub = sub {
+    if (lc($self->type // 'ntriples') eq 'ntriples') {
+        sub {
             require RDF::Trine::Statement;
             eval {
                 my $st = RDF::aREF::Decoder::trine_statement(@_);
@@ -116,14 +116,14 @@ item in C<add_many> the given fixes will be applied first.
 =item type
 
 A serialization form can be set with option C<type> with default value
-C<RDFXML>. The option must refer to a subclass of L<RDF::Trine::Serializer>,
+C<NTriples>. The option must refer to a subclass of L<RDF::Trine::Serializer>,
 for instance C<Turtle> for RDF/Turtle with L<RDF::Trine::Serializer::Turtle>.
 The first letter is transformed uppercase, so C<< format => 'turtle' >> will
 work as well. In addition there are aliases C<ttl> for C<Turtle>, C<n3> for
 C<Notation3>, C<xml> and C<XML> for C<RDFXML>, C<json> for C<RDFJSON>.
 
 When the option C<type> is set to 'NTriples' the export can be streamed in all 
-other cases the results are exported in bulk after commit().
+other cases the results are exported in bulk after C<commit()>.
 
 =item ns
 

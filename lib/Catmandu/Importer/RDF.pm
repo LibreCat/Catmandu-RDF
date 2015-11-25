@@ -15,7 +15,7 @@ use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
 
-our $VERSION = '0.27';
+our $VERSION = '0.28';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
