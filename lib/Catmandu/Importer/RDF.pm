@@ -379,6 +379,7 @@ Provide the L<CHI> based options for caching result sets. By default a memory st
                                     global => 1 , 
                                     max_size => 1024*1024 
                                 });
+
 =back
 
 =head1 METHODS
