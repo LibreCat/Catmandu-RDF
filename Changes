@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.29  2016-03-30 14:28:27 CEST
   - provide caching support for HTTP access
 
 0.28  2015-11-25 11:35:42 CET
