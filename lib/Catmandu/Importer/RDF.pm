@@ -16,7 +16,7 @@ use RDF::aREF::Encoder;
 use RDF::NS;
 use LWP::UserAgent::CHICaching;
 
-our $VERSION = '0.28';
+our $VERSION = '0.29';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
@@ -221,7 +221,7 @@ sub _sparql_stream {
 
     unless ($store) {
         $self->log->error("failed to connect to " . $self->url);
-        return undef;
+        return;
     }
 
     my $model =  RDF::Trine::Model->new($store);
@@ -230,14 +230,14 @@ sub _sparql_stream {
 
     unless ($rdf_query) {
         $self->log->error("failed to parse " . $self->sparql);
-        return undef;
+        return;
     }
 
     my $iterator = $rdf_query->execute($model);
 
     unless ($iterator) {
         $self->log->error("failed to execute " . $self->sparql . " at " . $self->url);
-        return undef;
+        return;
     }
 }
 
@@ -366,19 +366,15 @@ Set to a true value to cache repeated URL responses in a L<CHI> based backend.
 =item cache_options
 
 Provide the L<CHI> based options for caching result sets. By default a memory store of
-1MB size is used.
+1MB size is used. This is equal to:
 
-    use Catmandu;
-
-    my $importer = Catmandu->importer('RDF'
-                                , url => $url
-                                , sparql => $sparql
-                                , cache => 1
-                                , cache_options => {
-                                    driver => 'Memory', 
-                                    global => 1 , 
-                                    max_size => 1024*1024 
-                                });
+    Catamandu::Importer::RDF->new( ..., 
+        cache => 1, 
+        cache_options => {
+            driver => 'Memory',
+            global => 1, 
+            max_size => 1024*1024
+        });
 
 =back
 

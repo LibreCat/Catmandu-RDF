@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - provide caching support for HTTP access
 
 0.28  2015-11-25 11:35:42 CET
   - streaming export in NTriples format by default (issue #25)

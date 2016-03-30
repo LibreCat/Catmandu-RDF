@@ -52,7 +52,11 @@ This module is based on [Catmandu](https://metacpan.org/pod/Catmandu), [RDF::aRE
 
 # COPYRIGHT AND LICENSE
 
-Copyright Jakob Voss, 2014-
+Copyright Jakob Voß, 2014-
 
 This is free software; you can redistribute it and/or modify it under the same
 terms as the Perl 5 programming language system itself.
+
+# CONTRIBUTORS
+
+Jakob Voß, Patrick Hochstenbach

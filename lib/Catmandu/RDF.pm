@@ -6,7 +6,7 @@ use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
 
-our $VERSION = '0.28';
+our $VERSION = '0.29';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',
@@ -99,9 +99,13 @@ L<RDF::NS>.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright Jakob Voss, 2014-
+Copyright Jakob Voß, 2014-
 
 This is free software; you can redistribute it and/or modify it under the same
 terms as the Perl 5 programming language system itself.
+
+=head1 CONTRIBUTORS
+
+Jakob Voß, Patrick Hochstenbach
 
 =cut
