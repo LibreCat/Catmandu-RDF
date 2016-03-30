@@ -14,6 +14,7 @@ use RDF::LDF;
 use RDF::aREF;
 use RDF::aREF::Encoder;
 use RDF::NS;
+use LWP::UserAgent::CHICaching;
 
 our $VERSION = '0.28';
 
@@ -70,6 +71,31 @@ has predicate_map => (
 has triples => (
     is      => 'ro',
 );
+
+has cache => (
+    is      => 'ro',
+    default => sub { 0 }
+);
+
+has cache_options => (
+    is      => 'ro',
+    default => sub { +{
+        driver => 'Memory', 
+        global => 1 , 
+        max_size => 1024*1024 
+    } }
+);
+
+sub BUILD {
+    my ($self) = @_;
+
+    if ($self->cache) {
+        my $options = $self->cache_options // {};
+        my $cache = CHI->new( %$options );
+        my $ua = LWP::UserAgent::CHICaching->new(cache => $cache);
+        RDF::Trine->default_useragent($ua);
+    }
+}
 
 sub generator {
     my ($self) = @_;
@@ -332,6 +358,27 @@ Encoding of SPARQL result values. With C<aref>, query results are encoded in
 aREF format, with URIs in C<E<lt>> and C<E<gt>> (no qNames) and literal nodes
 appended by C<@> and optional language code. By default (value C<simple>), all
 RDF nodes are simplfied to their literal form.
+
+=item cache
+
+Set to a true value to cache repeated URL responses in a L<CHI> based backend.
+
+=item cache_options
+
+Provide the L<CHI> based options for caching result sets. By default a memory store of
+1MB size is used.
+
+    use Catmandu;
+
+    my $importer = Catmandu->importer('RDF'
+                                , url => $url
+                                , sparql => $sparql
+                                , cache => 1
+                                , cache_options => {
+                                    driver => 'Memory', 
+                                    global => 1 , 
+                                    max_size => 1024*1024 
+                                });
 
 =back
 
