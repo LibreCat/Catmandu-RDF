@@ -16,7 +16,7 @@ use RDF::aREF::Encoder;
 use RDF::NS;
 use LWP::UserAgent::CHICaching;
 
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';

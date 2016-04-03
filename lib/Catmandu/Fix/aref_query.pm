@@ -4,7 +4,7 @@ use Catmandu::Sane;
 use Moo;
 use Catmandu::Fix;
 
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 
 with 'Catmandu::Fix::Base';
 

@@ -6,7 +6,7 @@ use Catmandu::Util qw(is_instance);
 use Moo::Role;
 use RDF::NS;
 
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 
 our %TYPE_ALIAS = (
     Ttl  => 'Turtle',

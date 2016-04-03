@@ -1,6 +1,7 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+    - increase RDF::LDF version (#28) 
 
 0.29  2016-03-30 14:28:27 CEST
   - provide caching support for HTTP access
