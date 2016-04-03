@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.30  2016-04-03 13:30:18 CEST
     - increase RDF::LDF version (#28) 
 
 0.29  2016-03-30 14:28:27 CEST
