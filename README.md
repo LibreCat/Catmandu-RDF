@@ -4,8 +4,8 @@ Catmandu::RDF - Modules for handling RDF data within the Catmandu framework
 
 # STATUS
 
-[![Build Status](https://travis-ci.org/LibreCat/Catmandu-RDF.png)](https://travis-ci.org/LibreCat/Catmandu-RDF)
-[![Coverage Status](https://coveralls.io/repos/LibreCat/Catmandu-RDF/badge.png)](https://coveralls.io/r/LibreCat/Catmandu-RDF)
+[![Build Status](https://travis-ci.org/LibreCat/Catmandu-RDF.svg)](https://travis-ci.org/LibreCat/Catmandu-RDF)
+[![Coverage Status](https://coveralls.io/repos/LibreCat/Catmandu-RDF/badge.svg)](https://coveralls.io/r/LibreCat/Catmandu-RDF)
 [![Kwalitee Score](http://cpants.cpanauthors.org/dist/Catmandu-RDF.png)](http://cpants.cpanauthors.org/dist/Catmandu-RDF)
 
 # SYNOPSIS
