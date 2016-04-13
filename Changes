@@ -1,6 +1,8 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+
+0.31  2016-04-13 10:24:55 CEST
   - Fix test failure caused by RDF::NS (#29)
 
 0.30  2016-04-03 13:30:18 CEST
