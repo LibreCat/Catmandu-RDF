@@ -26,8 +26,8 @@ has url => (
 );
 
 has base => (
-    is      => 'ro', 
-    lazy    => 1, 
+    is      => 'ro',
+    lazy    => 1,
     builder => sub {
         defined $_[0]->file ? "file://".$_[0]->file : "http://example.org/";
     }
@@ -38,7 +38,7 @@ has encoder => (
     lazy    => 1,
     builder => sub {
         my $ns = $_[0]->ns;
-        RDF::aREF::Encoder->new( 
+        RDF::aREF::Encoder->new(
             ns => (($ns // 1) ? $ns : { }),
             subject_map => !$_[0]->predicate_map,
         );
@@ -80,9 +80,9 @@ has cache => (
 has cache_options => (
     is      => 'ro',
     default => sub { +{
-        driver => 'Memory', 
-        global => 1 , 
-        max_size => 1024*1024 
+        driver => 'Memory',
+        global => 1 ,
+        max_size => 1024*1024
     } }
 );
 
@@ -122,7 +122,7 @@ sub sparql_generator {
                 my $ref = {};
                 for (keys %$row) {
                     my $val = $row->{$_};
-                    $ref->{$_} = $self->sparql_result eq 'aref' 
+                    $ref->{$_} = $self->sparql_result eq 'aref'
                                ? $encoder->object($val) : do { # TODO: clean up
                                   if ( $val->is_resource ) {
                                      $val->uri_value;
@@ -245,7 +245,7 @@ sub _rdf_stream {
     my ($self) = @_;
 
     my $model  = RDF::Trine::Model->new;
-    my $parser = $self->type 
+    my $parser = $self->type
                ? RDF::Trine::Parser->new( $self->type ) : 'RDF::Trine::Parser';
 
     if ($self->url) {
@@ -261,7 +261,7 @@ sub _rdf_stream {
             $parser->parse_file_into_model( $self->base, $self->file // $self->fh, $model );
         }
     }
-    
+
     return $model->as_stream;
 }
 
@@ -278,10 +278,10 @@ Command line client C<catmandu>:
 
   catmandu convert RDF --url http://d-nb.info/gnd/4151473-7 to YAML
 
-  catmandu convert RDF --file rdfdump.ttl to JSON
+  catmandu convert RDF --type ttl --file rdfdump.ttl to JSON
 
   # Query a SPARQL endpoint
-  catmandu convert RDF --url http://dbpedia.org/sparql 
+  catmandu convert RDF --url http://dbpedia.org/sparql
                        --sparql "SELECT ?film WHERE { ?film dct:subject <http://dbpedia.org/resource/Category:French_films> }"
 
   catmandu convert RDF --url http://example.org/sparql --sparql query.rq
@@ -343,7 +343,7 @@ Import RDF as aREF predicate map, if possible.
 
 =item fix
 
-Default configuration options of L<Catmandu::Importer>. 
+Default configuration options of L<Catmandu::Importer>.
 
 =item sparql
 
@@ -368,11 +368,11 @@ Set to a true value to cache repeated URL responses in a L<CHI> based backend.
 Provide the L<CHI> based options for caching result sets. By default a memory store of
 1MB size is used. This is equal to:
 
-    Catamandu::Importer::RDF->new( ..., 
-        cache => 1, 
+    Catamandu::Importer::RDF->new( ...,
+        cache => 1,
         cache_options => {
             driver => 'Memory',
-            global => 1, 
+            global => 1,
             max_size => 1024*1024
         });
 
