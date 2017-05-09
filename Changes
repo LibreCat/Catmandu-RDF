@@ -1,12 +1,13 @@
 Changelog for Catmandu-RDF
 
 {{$NEXT}}
+  - Fixing SPARQL examples with latest RDF::LDF
 
 0.31  2016-04-13 10:24:55 CEST
   - Fix test failure caused by RDF::NS (#29)
 
 0.30  2016-04-03 13:30:18 CEST
-  - increase RDF::LDF version (#28) 
+  - increase RDF::LDF version (#28)
 
 0.29  2016-03-30 14:28:27 CEST
   - provide caching support for HTTP access
@@ -40,7 +41,7 @@ Changelog for Catmandu-RDF
 
 0.19  2014-12-10 14:17:59 CET
   - add triples importer mode (issue #5)
-  - disable namespaces with ns=0 (issue #8) 
+  - disable namespaces with ns=0 (issue #8)
   - support importing from string reference
 
 0.18  2014-10-14 12:53:01 CEST
@@ -98,4 +99,3 @@ Changelog for Catmandu-RDF
 0.01 2013-09-05T09:39:00
  - basic RDF Exporter
  - first draft
-
