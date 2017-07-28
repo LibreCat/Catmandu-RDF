@@ -9,4 +9,5 @@ requires 'RDF::aREF', '0.25';
 
 test_requires 'Test::More', '0.99';
 test_requires 'Test::LWP::UserAgent', '0.025';
+test_requires 'Test::Pod', '0';
 test_requires 'Encode', '0';
