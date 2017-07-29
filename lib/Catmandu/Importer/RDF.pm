@@ -283,6 +283,8 @@ sub _aref_stream {
     # parent
     $pipe->reader();
 
+    binmode($pipe,':encoding(UTF-8)');
+
     return sub {
       state $line = <$pipe>;
 
@@ -297,13 +299,15 @@ sub _aref_stream {
     # child
     $pipe->writer();
 
+    binmode($pipe,':encoding(UTF-8)');
+
     my $handler = sub {
         my $triple = shift;
 
         my $subject   = $triple->subject->value;
         my $predicate = $triple->predicate->value;
         my $value     = $triple->object->is_literal ? $triple->object->literal_value : $triple->object->uri_value;
-        my $type      = $triple->object->type;
+        my $type      = lc $triple->object->type;
         my $lang      = $triple->object->is_literal ? $triple->object->literal_value_language : undef;
         my $datatype  = $triple->object->is_literal ? $triple->object->literal_datatype : undef;
 
