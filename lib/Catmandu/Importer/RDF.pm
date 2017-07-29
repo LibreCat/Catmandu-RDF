@@ -155,8 +155,6 @@ sub rdf_generator {
 
         if ($self->triples) {
             if (my $hashref = $stream->()) {
-              use Data::Dumper;
-              warn Dumper($hashref);
                 $self->encoder->add_hashref($hashref, $aref);
             }
             else {
@@ -252,6 +250,7 @@ sub _sparql_stream {
 sub _hashref_stream {
   my ($self) = @_;
 
+  # Create a pipe stream to convert a callback handler into an iterator
   my $pipe = IO::Pipe->new();
 
   if (my $pid = fork()) {
@@ -294,9 +293,11 @@ sub _hashref_stream {
                               '_:' . $triple->object->blank_identifier :
                               $triple->object->uri_value;
         my $type      = lc $triple->object->type;
+        $type         = 'bnode' if $type eq 'blank';
         my $lang      = $triple->object->is_literal ? $triple->object->literal_value_language : undef;
         my $datatype  = $triple->object->is_literal ? $triple->object->literal_datatype : undef;
 
+        # Create the RDF::Trine type RDF/JSON RDF::aREF can parse
         my $hashref = {};
 
         $hashref->{$subject}->{$predicate}->[0]->{type}     = $type;
@@ -350,7 +351,8 @@ Command line client C<catmandu>:
   # bit to return each triple fragment
   catmandu convert RDF --type ttl --triples 1 --file rdfdump.ttl to JSON
 
-  # Transform back into NTriples
+  # Transform back into NTriples (conversions to and from triples is the
+  # most efficient way to process RDF)
   catmandu convert RDF --type ttl --triples 1 --file rdfdump.ttl to RDF --type NTriples
 
   # Query a SPARQL endpoint
@@ -402,7 +404,8 @@ Set to a specific date to get stable namespace prefix mappings.
 =item triples
 
 Import each RDF triple as one aREF subject map (default) or predicate map
-(option C<predicate_map>), if enabled.
+(option C<predicate_map>), if enabled. This is the most efficient way to
+process large input files. All the processing can be streamed.
 
 =item predicate_map
 
