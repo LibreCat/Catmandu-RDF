@@ -148,7 +148,7 @@ sub sparql_generator {
 sub rdf_generator {
     my ($self) = @_;
     sub {
-        state $stream = $self->_aref_stream;
+        state $stream = $self->_hashref_stream;
         return unless $stream;
 
         my $aref = { };
@@ -247,35 +247,8 @@ sub _sparql_stream {
     }
 }
 
-# sub _rdf_stream {
-#     my ($self) = @_;
-#
-#     my $model  = RDF::Trine::Model->new;
-#     my $parser = $self->type
-#                ? RDF::Trine::Parser->new( $self->type ) : 'RDF::Trine::Parser';
-#
-#     if ($self->url) {
-#         $parser->parse_url_into_model( $self->url, $model );
-#     } else {
-#         my $from_scalar = (ref $self->file // '') eq 'SCALAR';
-#         if (!$self->type and $self->file and !$from_scalar) {
-#             $parser = $parser->guess_parser_by_filename($self->file);
-#         }
-#         if ($from_scalar) {
-#             $parser->parse_into_model( $self->base, ${$self->file}, $model );
-#         } else {
-#             $parser->parse_file_into_model( $self->base, $self->file // $self->fh, $model );
-#         }
-#     }
-#
-#     return $model->as_stream;
-# }
-
-sub _aref_stream {
+sub _hashref_stream {
   my ($self) = @_;
-
-  my $parser = $self->type
-             ? RDF::Trine::Parser->new( $self->type ) : 'RDF::Trine::Parser';
 
   my $pipe = IO::Pipe->new();
 
@@ -301,12 +274,19 @@ sub _aref_stream {
 
     binmode($pipe,':encoding(UTF-8)');
 
+    my $parser = $self->type
+               ? RDF::Trine::Parser->new( $self->type ) : 'RDF::Trine::Parser';
+
     my $handler = sub {
         my $triple = shift;
 
         my $subject   = $triple->subject->value;
         my $predicate = $triple->predicate->value;
-        my $value     = $triple->object->is_literal ? $triple->object->literal_value : $triple->object->uri_value;
+        my $value     = $triple->object->is_literal ?
+                            $triple->object->literal_value :
+                            $triple->object->is_blank ?
+                              $triple->object->blank_identifier :
+                              $triple->object->uri_value;
         my $type      = lc $triple->object->type;
         my $lang      = $triple->object->is_literal ? $triple->object->literal_value_language : undef;
         my $datatype  = $triple->object->is_literal ? $triple->object->literal_datatype : undef;
@@ -328,7 +308,7 @@ sub _aref_stream {
         my $from_scalar = (ref $self->file // '') eq 'SCALAR';
 
         if (!$self->type and $self->file and !$from_scalar) {
-            $parser = $parser->guess_parser_by_filename($self->file);
+            $parser = $parser->guess_parser_by_filename($self->file)->new;
         }
 
         if ($from_scalar) {
