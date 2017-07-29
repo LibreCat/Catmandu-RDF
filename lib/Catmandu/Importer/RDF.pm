@@ -155,6 +155,8 @@ sub rdf_generator {
 
         if ($self->triples) {
             if (my $hashref = $stream->()) {
+              use Data::Dumper;
+              warn Dumper($hashref);
                 $self->encoder->add_hashref($hashref, $aref);
             }
             else {
@@ -280,12 +282,16 @@ sub _hashref_stream {
     my $handler = sub {
         my $triple = shift;
 
-        my $subject   = $triple->subject->value;
-        my $predicate = $triple->predicate->value;
+        my $subject   = $triple->subject->is_blank ?
+                            '_:' . $triple->subject->blank_identifier :
+                            $triple->subject->uri_value;
+        my $predicate = $triple->predicate->is_blank ?
+                            '_:' . $triple->predicate->blank_identifier :
+                            $triple->predicate->value;
         my $value     = $triple->object->is_literal ?
                             $triple->object->literal_value :
                             $triple->object->is_blank ?
-                              $triple->object->value :
+                              '_:' . $triple->object->blank_identifier :
                               $triple->object->uri_value;
         my $type      = lc $triple->object->type;
         my $lang      = $triple->object->is_literal ? $triple->object->literal_value_language : undef;
