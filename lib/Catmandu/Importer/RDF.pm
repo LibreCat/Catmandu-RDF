@@ -307,13 +307,14 @@ sub _aref_stream {
         my $lang      = $triple->object->is_literal ? $triple->object->literal_value_language : undef;
         my $datatype  = $triple->object->is_literal ? $triple->object->literal_datatype : undef;
 
-        print $pipe encode_json({
-            $subject => {
-              $predicate => [
-                { type => $type , datatype => $datatype , lang => $lang , value => $value }
-              ]
-            }
-        }) , "\n";
+        my $hashref = {};
+
+        $hashref->{$subject}->{$predicate}->[0]->{type}     = $type;
+        $hashref->{$subject}->{$predicate}->[0]->{datatype} = $datatype if $datatype;
+        $hashref->{$subject}->{$predicate}->[0]->{lang}     = $lang if $lang;
+        $hashref->{$subject}->{$predicate}->[0]->{value}    = $value;
+
+        print $pipe encode_json($hashref) , "\n";
     };
 
     if ($self->url) {
