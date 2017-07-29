@@ -285,7 +285,7 @@ sub _hashref_stream {
         my $value     = $triple->object->is_literal ?
                             $triple->object->literal_value :
                             $triple->object->is_blank ?
-                              $triple->object->blank_identifier :
+                              $triple->object->value :
                               $triple->object->uri_value;
         my $type      = lc $triple->object->type;
         my $lang      = $triple->object->is_literal ? $triple->object->literal_value_language : undef;
@@ -339,6 +339,13 @@ Command line client C<catmandu>:
   catmandu convert RDF --url http://d-nb.info/gnd/4151473-7 to YAML
 
   catmandu convert RDF --type ttl --file rdfdump.ttl to JSON
+
+  # For big input files it will be faster not to build a big hash in memory
+  # bit to return each triple fragment
+  catmandu convert RDF --type ttl --triples 1 --file rdfdump.ttl to JSON
+
+  # Transform back into NTriples
+  catmandu convert RDF --type ttl --triples 1 --file rdfdump.ttl to RDF --type NTriples
 
   # Query a SPARQL endpoint
   catmandu convert RDF --url http://dbpedia.org/sparql
