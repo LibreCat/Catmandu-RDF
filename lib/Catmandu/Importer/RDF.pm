@@ -88,6 +88,10 @@ has cache_options => (
     } }
 );
 
+has speed => (
+    is      => 'ro',
+);
+
 sub BUILD {
     my ($self) = @_;
 
@@ -279,7 +283,9 @@ sub _hashref_stream {
                ? RDF::Trine::Parser->new( $self->type ) : 'RDF::Trine::Parser';
 
     my $handler = sub {
-        my $triple = shift;
+        my $triple    = shift;
+        state $start  = time;
+        state $count  = 0;
 
         my $subject   = $triple->subject->is_blank ?
                             '_:' . $triple->subject->blank_identifier :
@@ -306,6 +312,12 @@ sub _hashref_stream {
         $hashref->{$subject}->{$predicate}->[0]->{value}    = $value;
 
         print $pipe encode_json($hashref) , "\n";
+
+        $count++;
+
+        if ($self->speed && ($count % 100 == 0) && (my $elapsed = time - $start) ) {
+          printf STDERR "triples %9d (%d/sec)\n" , $count , $count/$elapsed;
+        }
     };
 
     if ($self->url) {
@@ -345,15 +357,15 @@ Command line client C<catmandu>:
 
   catmandu convert RDF --url http://d-nb.info/gnd/4151473-7 to YAML
 
-  catmandu convert RDF --type ttl --file rdfdump.ttl to JSON
+  catmandu convert RDF --file rdfdump.ttl to JSON
 
-  # For big input files it will be faster not to build a big hash in memory
-  # bit to return each triple fragment
-  catmandu convert RDF --type ttl --triples 1 --file rdfdump.ttl to JSON
+  # Parse the input into on JSON document per triplet. This is the
+  # most memory efficient (and fastest) way to parse RDF input.
+  catmandu convert RDF --triples 1 --file rdfdump.ttl to JSON
 
   # Transform back into NTriples (conversions to and from triples is the
   # most efficient way to process RDF)
-  catmandu convert RDF --type ttl --triples 1 --file rdfdump.ttl to RDF --type NTriples
+  catmandu convert RDF --triples 1 --file rdfdump.ttl to RDF --type NTriples
 
   # Query a SPARQL endpoint
   catmandu convert RDF --url http://dbpedia.org/sparql
@@ -451,6 +463,11 @@ Provide the L<CHI> based options for caching result sets. By default a memory st
             global => 1,
             max_size => 1024*1024
         });
+
+=item speed
+
+If set to a true value, then write RDF file processing speed on the STDERR as
+number of triples parsed per second.
 
 =back
 
