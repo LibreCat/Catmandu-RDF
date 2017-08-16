@@ -6,7 +6,7 @@ requires 'RDF::NS', '20140910';
 requires 'RDF::Query', '2.913';
 requires 'RDF::Trine', '1.013';
 requires 'RDF::aREF', '0.25';
-requires 'Future', '0.35';
+requires 'IRI', '>=0.008';
 
 test_requires 'Test::More', '0.99';
 test_requires 'Test::LWP::UserAgent', '0.025';
