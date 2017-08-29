@@ -18,7 +18,7 @@ use IO::Pipe;
 use JSON;
 use LWP::UserAgent::CHICaching;
 
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 with 'Catmandu::RDF';
 with 'Catmandu::Importer';
