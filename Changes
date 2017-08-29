@@ -1,6 +1,6 @@
 Changelog for Catmandu-RDF
 
-{{$NEXT}}
+0.32  2017-08-29 13:23:32 CEST
   - Fixing SPARQL examples with latest RDF::LDF
   - Better support for streaming RDF input
   - Adding a --speed option to the Catmandu::Importer::RDF

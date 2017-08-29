@@ -68,7 +68,7 @@
          "web" : "https://github.com/LibreCat/Catmandu-RDF"
       }
    },
-   "version" : "0.31",
+   "version" : "0.32",
    "x_contributors" : [
       "Jakob Vo\u00df <jakob.voss@gbv.de>",
       "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>"
