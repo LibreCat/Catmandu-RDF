@@ -63,7 +63,7 @@ Command line client C<catmandu>:
   # For big file the only efficient option to convert RDF is by
   # transforming the input stream into triples and writing to NTriples
   # in the output
-  catmandu convert convert RDF --triples 1 --type ttl to RDF --type NTriples < rdfdump.ttl
+  catmandu convert RDF --triples 1 --type ttl to RDF --type NTriples < rdfdump.ttl
 
 See documentation of modules for more examples.
 
