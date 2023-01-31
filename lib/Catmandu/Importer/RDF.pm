@@ -435,7 +435,7 @@ Default configuration options of L<Catmandu::Importer>.
 
 =item sparql
 
-The SPARQL query to be executed on the URL endpoint (currectly only SELECT is
+The SPARQL query to be executed on the URL endpoint (correctly only SELECT is
 supported).  The query can be supplied as string or as filename. The importer
 tries to automatically add missing PREFIX statements from the default namespace
 prefixes.
